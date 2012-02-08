@@ -130,6 +130,13 @@
 			'JCB' => '007',
 		);
 		
+		public $test_cards = array(
+			'amex' => '378282246310005',
+			'discover' => '6011111111111117',
+			'mastercard' => '5555555555554444',
+			'visa' => '4111111111111111',
+		);
+		
 		public function __construct ( $merchant_id = null, $transaction_id = null, $environment = self::ENV_TEST ) {
 			
 			$this->merchant_id( $merchant_id );
