@@ -32,6 +32,11 @@
 		 */
 		public $response;
 		
+		/**
+		 * @var float The amount of time in seconds to wait for both a connection and a response. Total potential wait time is this value times 2 (connection + response).
+		 */
+		public $timeout = 10;
+		
 		public $avs_codes = array(
 			'A' => 'Partial match: Street address matches, but 5-digit and 9-digit postal codes do not match.',
 			'B' => 'Partial match: Street address matches, but postal code is not verified.',
@@ -453,8 +458,40 @@
 		
 		private function run_transaction ( $request ) {
 			
-			// create the soap client
-			$soap = new SoapClient( $this->environment );
+			$context_options = array(
+				'http' => array(
+					'timeout' => $this->timeout,
+				),
+			);
+
+			$context = stream_context_create( $context_options );
+
+			// options we pass into the soap client
+			$soap_options = array(
+				'compression' => true,		// turn on HTTP compression
+				'encoding' => 'utf-8',		// set the internal character encoding to avoid random conversions
+				'exceptions' => true,		// throw SoapFault exceptions when there is an error
+				'connection_timeout' => $this->timeout,
+				'stream_context' => $context,
+			);
+
+			// if we're in test mode, don't cache the wsdl
+			if ( $this->environment == self::ENV_TEST ) {
+				$soap_options['cache_wsdl'] = WSDL_CACHE_NONE;
+			}
+
+			// if we're in production mode, cache the wsdl like crazy
+			if ( $this->environment == self::ENV_PRODUCTION ) {
+				$soap_options['cache_wsdl'] = WSDL_CACHE_BOTH;
+			}
+
+			try {
+				// create the soap client
+				$soap = new SoapClient( $this->environment, $soap_options );
+			}
+			catch ( SoapFault $sf ) {
+				throw new CyberSource_Connection_Exception( $sf->getMessage(), $sf->getCode() );
+			}
 			
 			// add the wsse token to the soap object, by reference
 			$this->add_wsse_token( $soap );
@@ -565,5 +602,6 @@
 	}
 	
 	class CyberSource_Declined_Exception extends Exception {}
+	class CyberSource_Connection_Exception extends Exception {}
 
 ?>
