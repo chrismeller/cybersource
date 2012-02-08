@@ -323,6 +323,12 @@
 			
 			$subscription_create = new stdClass();
 			$subscription_create->run = 'true';
+			
+			// if there is a request token passed in, reference it
+			if ( $request_token != null ) {
+				$subscription_create->paymentRequestID = $request_token;
+			}
+			
 			$request->paySubscriptionCreateService = $subscription_create;
 			
 			// specify that this is an on-demand subscription, it should not auto-bill
@@ -330,11 +336,16 @@
 			$subscription_info->frequency = 'on-demand';
 			$request->recurringSubscriptionInfo = $subscription_info;
 			
-			// add billing info to the request
-			$request->billTo = $this->create_bill_to();
-			
-			// add credit card info to the request
-			$request->card = $this->create_card();
+			// we only need to add billing info to the request if there is not a previous request token - otherwise it's contained in it
+			if ( $request_token == null ) {
+
+				// add billing info to the request
+				$request->billTo = $this->create_bill_to();
+
+				// add credit card info to the request
+				$request->card = $this->create_card();
+				
+			}
 			
 			$response = $this->run_transaction( $request );
 			
