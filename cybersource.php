@@ -101,7 +101,7 @@
 			'211' => 'Invalid CVN.',
 			'221' => 'The customer matched an entry on the processor\'s negative file.',
 			'230' => 'The authorization request was approved by the issuing bank but declined by CyberSource because it did not pass the CVN check.',
-			'231' => 'Invalid account number.',
+			'231' => 'Invalid credit card number.',
 			'232' => 'The card type is not accepted by the payment processor.',
 			'233' => 'General decline by the processor.',
 			'234' => 'There is a problem with your CyberSource merchant configuration.',
