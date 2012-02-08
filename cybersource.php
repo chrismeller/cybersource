@@ -134,7 +134,7 @@
 			
 		}
 		
-		public function factory ( $merchant_id = null, $transaction_id = null, $environment = self::ENV_TEST ) {
+		public static function factory ( $merchant_id = null, $transaction_id = null, $environment = self::ENV_TEST ) {
 			
 			$class = __CLASS__;
 			$object = new $class( $merchant_id, $transaction_id, $environment );
