@@ -2,7 +2,7 @@ Description
 ===========
 A simple class for interfacing with some of the most basic methods of the [CyberSource](http://cybersource.com) SOAP Toolkit API for processing credit card transactions online.
 
-CyberSource encourages the use of their Simple Order API, which utilizes a custom PHP extension that hasn't been updated since 2007. This class avoids the need to install a custom extension and provides a quick and easy entry point to their SOAP API instead.
+CyberSource encourages the use of their Simple Order API, which utilizes a custom PHP extension that hasn't been updated since 2007 (and doesn't support 64-bit servers). This class avoids the need to install a custom extension and provides a quick and easy entry point to their SOAP API instead.
 
 API Documentation
 -----------------
