@@ -767,7 +767,12 @@
 		
 	}
 	
-	class CyberSource_Declined_Exception extends Exception {}
-	class CyberSource_Connection_Exception extends Exception {}
+	class CyberSource_Exception extends Exception {}
+	
+	class CyberSource_Error_Exception extends CyberSource_Exception {}
+	class CyberSource_Declined_Exception extends CyberSource_Exception {}
+	class CyberSource_Connection_Exception extends CyberSource_Exception {}
+	class CyberSource_Invalid_Field_Exception extends CyberSource_Exception {}
+	class CyberSource_Missing_Field_Exception extends CyberSource_Exception {}
 
 ?>
