@@ -530,6 +530,36 @@
 			
 		}
 		
+		public function authorize ( $amount = null ) {
+			
+			$request = $this->create_request();
+			
+			$cc_auth_service = new stdClass();
+			$cc_auth_service->run = 'true';
+			$request->ccAuthService = $cc_auth_service;
+			
+			// add billing info to the request
+			$request->billTo = $this->create_bill_to();
+			
+			// add credit card info to the request
+			$request->card = $this->create_card();
+			
+			// if there was an amount specified, just use it - otherwise add the individual items
+			if ( $amount !== null ) {
+				$request->purchaseTotals->grandTotalAmount = $amount;
+			}
+			else {
+				$this->create_items( $request );
+			}
+			
+			// run the authorization
+			$response = $this->run_transaction( $request );
+			
+			// if we didn't throw an exception everything went fine, just return the response
+			return $response;
+			
+		}
+		
 		private function run_transaction ( $request ) {
 			
 			$context_options = array(
