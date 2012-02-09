@@ -2,11 +2,11 @@
 
 	class CyberSource {
 		
-		const ENV_TEST = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.60.wsdl';
-		const ENV_PRODUCTION = 'https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.60.wsdl';
+		const ENV_TEST = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.67.wsdl';
+		const ENV_PRODUCTION = 'https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.67.wsdl';
 		
-		const VERSION = '0.1';
-		const API_VERSION = '1.60';
+		const VERSION = '0.2';
+		const API_VERSION = '1.67';
 		
 		/**
 		 * @var string The URL to the WSDL endpoint for the environment we're running in (test or production), as stored in self::ENV_* constants.
