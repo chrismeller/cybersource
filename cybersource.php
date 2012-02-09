@@ -617,6 +617,57 @@
 			
 		}
 		
+		/**
+		 * Try to determine the type of card based on its number.
+		 * 
+		 * @see http://www.cybersource.com/support_center/management/best_practices/view.php?page_id=416
+		 * @param int $card_number The credit card number
+		 * @return string The name of the card type.
+		 */
+		public function card_type ( $card_number ) {
+			
+			$digits = str_split( $card_number );
+			echo 'Card Length: ' . strlen( $card_number ) . '<br />';
+			print_r($digits);
+			echo '<br />';
+			echo 'First 4: ' . substr( $card_number, 0, 4 ) . '<br />';
+			echo 'First 8: ' . substr( $card_number, 0, 8 ) . '<br />';
+			echo '<br /><br />';
+			
+			if ( strlen( $card_number ) == 15 && $digits[0] == 3 && ( $digits[1] == 4 || $digits[1] == 7 ) ) {
+				return 'American Express';
+			}
+			else if ( strlen( $card_number ) == 14 && $digits[0] == 3 && in_array( $digits[1], array( 0, 6, 8 ) ) ) {
+				return 'Diners Club';		// also Carte Blanche - how the hell am i supposed to know?
+			}
+			else if ( strlen( $card_number ) == 16 && (
+				( substr( $card_number, 0, 8 ) >= 60110000 && substr( $card_number, 0, 8 ) <= 60119999 ) ||
+				( substr( $card_number, 0, 8 ) >= 65000000 && substr( $card_number, 0, 8 ) <= 65999999 ) ||
+				( substr( $card_number, 0, 8 ) >= 62212600 && substr( $card_number, 0, 8 ) <= 62292599 )
+			) ) {
+				return 'Discover';
+			}
+			else if ( strlen( $card_number ) == 15 && in_array( substr( $card_number, 0, 4 ), array( 2014, 2149 ) ) ) {
+				return 'enRoute';
+			}
+			else if ( strlen( $card_number ) == 16 && (
+				in_array( substr( $card_number, 0, 4 ), array( 3088, 3096, 3112, 3158, 3337 ) ) ||
+				( substr( $card_number, 0, 8 ) >= 35280000 && substr( $card_number, 0, 8 ) <= 35899999 )
+			) ) {
+				return 'JCB';
+			}
+			else if ( strlen( $card_number ) == 16 && $digits[0] == 5 && $digits[1] >= 1 && $digits[1] <= 5 ) {
+				return 'MasterCard';
+			}
+			else if ( ( strlen( $card_number ) == 13 || strlen( $card_number ) == 16 ) && $digits[0] == 4 ) {
+				return 'Visa';
+			}
+			
+			// otherwise, we don't know
+			return null;
+			
+		}
+		
 	}
 	
 	class CyberSource_Declined_Exception extends Exception {}
