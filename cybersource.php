@@ -609,7 +609,41 @@
 			$this->response = $response;
 			
 			if ( $response->decision != 'ACCEPT' ) {
-				throw new CyberSource_Declined_Exception( $this->result_codes[ $response->reasonCode ], $response->reasonCode );
+				
+				// customize the error message if the reason indicates a field is missing
+				if ( $response->reasonCode == 101 ) {
+					
+					$message = $this->result_codes[ $response->reasonCode ];
+					
+					if ( isset( $response->missingField ) ) {
+						$message .= ' (' . $response->missingField . ')';
+					}
+					
+					throw new CyberSource_Missing_Field_Exception( $message );
+				}
+				
+				// customize the error message if the reason code indicates a field is invalid
+				if ( $response->reasonCode == 102 ) {
+					
+					$message = $this->result_codes[ $response->reasonCode ];
+					
+					if ( isset( $response->invalidField ) ) {
+						$message .= ' (' . $response->invalidField . ')';
+					}
+					
+					throw new CyberSource_Invalid_Field_Exception( $message );
+					
+				}
+				
+				// otherwise, just throw a generic declined exception
+				if ( $response->decision == 'ERROR' ) {
+					// note that ERROR means some kind of system error or the processor rejected invalid data - it probably doesn't mean the card was actually declined
+					throw new CyberSource_Error_Exception( $this->result_codes[ $response->reasonCode ], $response->reasonCode );
+				}
+				else {
+					// declined, however, actually means declined. this would be decision 'REJECT', btw.
+					throw new CyberSource_Declined_Exception( $this->result_codes[ $response->reasonCode ], $response->reasonCode );
+				}
 			}
 			
 			return $response;
