@@ -323,6 +323,7 @@
 		 * pre-created request token from an authorization request that's already been performed.
 		 * 
 		 * @param string $request_token The request token received from an AuthReply statement, if applicable.
+		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
 		public function create_subscription ( $request_token = null ) {
 			
@@ -361,6 +362,12 @@
 			
 		}
 		
+		/**
+		 * Delete the given Subscription ID permanently.
+		 * 
+		 * @param string $subscription_id The CyberSource Subscription ID to delete.
+		 * @return stdClass The raw response object from the SOAP endpoint
+		 */
 		public function delete_subscription ( $subscription_id ) {
 			
 			$request = $this->create_request();
@@ -379,6 +386,13 @@
 			
 		}
 		
+		/**
+		 * Charge the given Subscription ID a certain amount.
+		 * 
+		 * @param string $subscription_id The CyberSource Subscription ID to charge.
+		 * @param float $amount The dollar amount to charge.
+		 * @return stdClass The raw response object from the SOAP endpoint
+		 */
 		public function charge_subscription ( $subscription_id, $amount ) {
 			
 			$request = $this->create_request();
@@ -449,6 +463,11 @@
 			
 		}
 		
+		/**
+		 * Performs a 0-dollar authorization on a credit card to test its validity.
+		 * 
+		 * @return stdClass The raw response object from the SOAP endpoint
+		 */
 		public function validate_card ( ) {
 			
 			$request = $this->create_request();
@@ -530,6 +549,23 @@
 			
 		}
 		
+		/**
+		 * Factory-pattern method for setting the billing information for this charge.
+		 * 
+		 * Required fields are:
+		 *	firstName
+		 *	lastName
+		 *	street1
+		 *	city
+		 *	state
+		 *	postalCode
+		 *	country
+		 *	email
+		 * 
+		 * @param array $info An associative array of the fields to set. Note the required fields above.
+		 * @return \CyberSource The current object.
+		 * @throws InvalidArgumentException Thrown when a required field is not present in the $info array.
+		 */
 		public function bill_to ( $info = array() ) {
 			
 			$fields = array(
@@ -561,9 +597,9 @@
 		}
 		
 		/**
-		 * Get the remote IP address, but try and take into account common proxy headers and the like
+		 * Get the remote IP address, but try and take into account common proxy headers and the like.
 		 * 
-		 * @return The client's IP address.
+		 * @return string The client's IP address or 0.0.0.0 if we couldn't find it.
 		 */
 		private function get_ip ( ) {
 			
