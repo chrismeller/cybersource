@@ -251,6 +251,26 @@
 			
 		}
 		
+		private function create_items ( $request ) {
+			
+			// there is no container for items, which annoys me
+			$request->item = array();
+			$i = 0;
+			foreach ( $this->items as $item ) {
+				$it = new stdClass();
+				$it->unitPrice = $item['unitPrice'];
+				$it->quantity = $item['quantity'];
+				$it->id = $i;
+				
+				$request->item[] = $it;
+				
+				$i++;
+			}
+			
+			return $request;
+			
+		}
+		
 		private function create_bill_to ( ) {
 			
 			// build the billTo class
@@ -278,7 +298,7 @@
 			
 		}
 		
-		public function charge ( ) {
+		public function charge ( $amount = null ) {
 			
 			$request = $this->create_request();
 			
@@ -298,18 +318,35 @@
 			// add credit card info to the request
 			$request->card = $this->create_card();
 			
-			// there is no container for items, which annoys me
-			$request->item = array();
-			$i = 0;
-			foreach ( $this->items as $item ) {
-				$it = new stdClass();
-				$it->unitPrice = $item['unitPrice'];
-				$it->quantity = $item['quantity'];
-				$it->id = $i;
-				
-				$request->item[] = $it;
-				
-				$i++;
+			// if there was an amount specified, just use it - otherwise add the individual items
+			if ( $amount !== null ) {
+				$request->purchaseTotals->grandTotalAmount = $amount;
+			}
+			else {
+				$this->create_items( $request );
+			}
+			
+			$response = $this->run_transaction( $request );
+			
+			return $response;
+			
+		}
+		
+		public function capture ( $request_token = null, $amount = null ) {
+			
+			$request = $this->create_request();
+			
+			$capture_service = new stdClass();
+			$capture_service->run = 'true';
+			$capture_service->authRequestToken = $request_token;
+			$request->ccCaptureService = $capture_service;
+			
+			// if there was an amount specified, just use it - otherwise add the individual items
+			if ( $amount !== null ) {
+				$request->purchaseTotals->grandTotalAmount = $amount;
+			}
+			else {
+				$this->create_items( $request );
 			}
 			
 			$response = $this->run_transaction( $request );
