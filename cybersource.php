@@ -627,12 +627,6 @@
 		public function card_type ( $card_number ) {
 			
 			$digits = str_split( $card_number );
-			echo 'Card Length: ' . strlen( $card_number ) . '<br />';
-			print_r($digits);
-			echo '<br />';
-			echo 'First 4: ' . substr( $card_number, 0, 4 ) . '<br />';
-			echo 'First 8: ' . substr( $card_number, 0, 8 ) . '<br />';
-			echo '<br /><br />';
 			
 			if ( strlen( $card_number ) == 15 && $digits[0] == 3 && ( $digits[1] == 4 || $digits[1] == 7 ) ) {
 				return 'American Express';
