@@ -359,10 +359,11 @@
 		 * Create a new payment subscription, either by performing a $0 authorization check on the credit card or using a 
 		 * pre-created request token from an authorization request that's already been performed.
 		 * 
-		 * @param string $request_token The request token received from an AuthReply statement, if applicable.
+		 * @param string $request_id The request ID received from an AuthReply statement, if applicable.
+		 * @param boolean $auto_authorize Set to false to enable the disableAutoAuth flag to avoid an authorization and simply store the card. The default (null) means to omit the value, which means it'll use the setting on the account.
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function create_subscription ( $request_token = null ) {
+		public function create_subscription ( $request_id = null, $auto_authorize = null ) {
 			
 			$request = $this->create_request();
 			
@@ -370,8 +371,15 @@
 			$subscription_create->run = 'true';
 			
 			// if there is a request token passed in, reference it
-			if ( $request_token != null ) {
-				$subscription_create->paymentRequestID = $request_token;
+			if ( $request_id != null ) {
+				$subscription_create->paymentRequestID = $request_id;
+			}
+			else {
+				
+				if ( $auto_authorize === false ) {
+					$subscription_create->disableAutoAuth = 'true';
+				}
+				
 			}
 			
 			$request->paySubscriptionCreateService = $subscription_create;
@@ -382,7 +390,7 @@
 			$request->recurringSubscriptionInfo = $subscription_info;
 			
 			// we only need to add billing info to the request if there is not a previous request token - otherwise it's contained in it
-			if ( $request_token == null ) {
+			if ( $request_id == null ) {
 
 				// add billing info to the request
 				$request->billTo = $this->create_bill_to();
