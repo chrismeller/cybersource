@@ -568,7 +568,7 @@
 			
 		}
 		
-		private function run_transaction ( $request ) {
+		protected function run_transaction ( $request ) {
 			
 			$context_options = array(
 				'http' => array(
