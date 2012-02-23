@@ -623,11 +623,17 @@
 					
 					$message = $this->result_codes[ $response->reasonCode ];
 					
-					if ( isset( $response->missingField ) ) {
-						$message .= ' (' . $response->missingField . ')';
+					if ( !isset( $response->missingField ) ) {
+						$missing_fields = 'Unknown';
+					}
+					else if ( is_array( $response->missingField ) ) {
+						$missing_fields = implode( ', ', $response->missingField );
+					}
+					else {
+						$missing_fields = $response->missingField;
 					}
 					
-					throw new CyberSource_Missing_Field_Exception( $message );
+					throw new CyberSource_Missing_Field_Exception( $missing_fields, 101 );
 				}
 				
 				// customize the error message if the reason code indicates a field is invalid
@@ -635,12 +641,17 @@
 					
 					$message = $this->result_codes[ $response->reasonCode ];
 					
-					if ( isset( $response->invalidField ) ) {
-						$message .= ' (' . $response->invalidField . ')';
+					if ( !isset( $response->invalidField ) ) {
+						$invalid_fields = 'Unknown';
+					}
+					else if ( is_array( $response->invalidField ) ) {
+						$invalid_fields = implode( ', ', $response->invalidField );
+					}
+					else {
+						$invalid_fields = $response->invalidField;
 					}
 					
-					throw new CyberSource_Invalid_Field_Exception( $message );
-					
+					throw new CyberSource_Invalid_Field_Exception( $invalid_fields, 102 );
 				}
 				
 				// otherwise, just throw a generic declined exception
