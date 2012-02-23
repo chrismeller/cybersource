@@ -767,7 +767,7 @@
 		 * 
 		 * @see http://www.cybersource.com/support_center/management/best_practices/view.php?page_id=416
 		 * @param int $card_number The credit card number
-		 * @return string The name of the card type.
+		 * @return string|null The name of the card type or null if it wasn't matched.
 		 */
 		public function card_type ( $card_number ) {
 			
