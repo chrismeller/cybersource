@@ -621,8 +621,6 @@
 				// customize the error message if the reason indicates a field is missing
 				if ( $response->reasonCode == 101 ) {
 					
-					$message = $this->result_codes[ $response->reasonCode ];
-					
 					if ( !isset( $response->missingField ) ) {
 						$missing_fields = 'Unknown';
 					}
@@ -638,8 +636,6 @@
 				
 				// customize the error message if the reason code indicates a field is invalid
 				if ( $response->reasonCode == 102 ) {
-					
-					$message = $this->result_codes[ $response->reasonCode ];
 					
 					if ( !isset( $response->invalidField ) ) {
 						$invalid_fields = 'Unknown';
