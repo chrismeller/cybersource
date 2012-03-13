@@ -360,7 +360,7 @@
 		 * pre-created request token from an authorization request that's already been performed.
 		 * 
 		 * @param string $request_id The request ID received from an AuthReply statement, if applicable.
-		 * @param boolean $auto_authorize Set to false to enable the disableAutoAuth flag to avoid an authorization and simply store the card. The default (null) means to omit the value, which means it'll use the setting on the account.
+		 * @param boolean|null $auto_authorize Set to false to enable the disableAutoAuth flag to avoid an authorization and simply store the card. The default (null) means to omit the value, which means it'll use the setting on the account. Set to true to force an authorization, whether the account requires it or not.
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
 		public function create_subscription ( $request_id = null, $auto_authorize = null ) {
@@ -378,6 +378,9 @@
 				
 				if ( $auto_authorize === false ) {
 					$subscription_create->disableAutoAuth = 'true';
+				}
+				else if ( $auto_authorize === true ) {
+					$subscription_create->disableAutoAuth = 'false';
 				}
 				
 			}
