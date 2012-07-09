@@ -875,6 +875,29 @@
 
 		}
 
+		/**
+		 * Void a request that has not yet been settled. If it's already settled, you'll have to do a credit instead.
+		 *
+		 * It's up to you to figure out if it's been settled or not. May I suggest the reporting API?
+		 *
+		 * @param  string $request_id The Request ID of the operation you wish to void.
+		 * @return object The response object from CyberSource.
+		 */
+		public function void ( $request_id ) {
+
+			$request = $this->create_request();
+
+			$void_service = new stdClass();
+			$void_service->run = 'true';
+			$void_service->voidRequestID = $request_id;
+			$request->voidService = $void_service;
+
+			$response = $this->run_transaction( $request );
+
+			return $response;
+
+		}
+
 	}
 	
 	class CyberSource_Exception extends Exception {}
