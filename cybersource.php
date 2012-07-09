@@ -848,7 +848,32 @@
 			return null;
 			
 		}
-		
+
+		public function reverse_authorization ( $request_id, $amount = null ) {
+
+			$request = $this->create_request();
+
+			$cc_auth_reversal_service = new stdClass();
+			$cc_auth_reversal_service->run = 'true';
+			$cc_auth_reversal_service->authRequestID = $request_id;
+			$request->ccAuthReversalService = $cc_auth_reversal_service;
+
+			// if there was an amount specified, just use it - otherwise add the individual items
+			if ( $amount !== null ) {
+				$request->purchaseTotals->grandTotalAmount = $amount;
+			}
+			else {
+				$this->create_items( $request );
+			}
+
+			// run the authorization reversal
+			$response = $this->run_transaction( $request );
+
+			// if we didn't throw an exception everything went fine, just return the response
+			return $response;
+
+		}
+
 	}
 	
 	class CyberSource_Exception extends Exception {}
