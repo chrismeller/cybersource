@@ -355,7 +355,14 @@
 			
 		}
 		
-		public function credit ( $request_id ) {
+		/**
+		 * Perform a follow-on credit. This credits back a certain amount, based on a previous Request ID.
+		 *
+		 * @param  string $request_id The Request ID from a previous charge() or capture() request.
+		 * @param  int $amount     The amount to credit. Leave it null to use the list of items already assigned to the current object instead.
+		 * @return object             The response from CyberSource.
+		 */
+		public function credit ( $request_id, $amount = null ) {
 			
 			$request = $this->create_request();
 			
@@ -365,18 +372,12 @@
 			$cc_credit_service->captureRequestID = $request_id;
 			$request->ccCreditService = $cc_credit_service;
 			
-			// there is no container for items, which annoys me
-			$request->item = array();
-			$i = 0;
-			foreach ( $this->items as $item ) {
-				$it = new stdClass();
-				$it->unitPrice = $item['unitPrice'];
-				$it->quantity = $item['quantity'];
-				$it->id = $i;
-				
-				$request->item[] = $it;
-				
-				$i++;
+			// if there was an amount specified, just use it - otherwise add the individual items
+			if ( $amount !== null ) {
+				$request->purchaseTotals->grandTotalAmount = $amount;
+			}
+			else {
+				$this->create_items( $request );
 			}
 			
 			$response = $this->run_transaction( $request );
