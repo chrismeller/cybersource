@@ -355,17 +355,17 @@
 			
 		}
 		
-		public function credit ( $requestId ) {
+		public function credit ( $request_id ) {
 			
 			$request = $this->create_request();
 			
 			// we want to perform an authorization
 			$cc_credit_service = new stdClass();
 			$cc_credit_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
-			$cc_credit_service->captureRequestID = $requestId;
+			$cc_credit_service->captureRequestID = $request_id;
 			$request->ccCreditService = $cc_credit_service;
 			
-				// there is no container for items, which annoys me
+			// there is no container for items, which annoys me
 			$request->item = array();
 			$i = 0;
 			foreach ( $this->items as $item ) {
@@ -383,7 +383,7 @@
 			
 			return $response;
 			
-		}		
+		}
 		
 		/**
 		 * Create a new payment subscription, either by performing a $0 authorization check on the credit card or using a 
