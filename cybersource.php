@@ -230,7 +230,7 @@
 			
 		}
 		
-		private function create_request ( ) {
+		protected function create_request ( ) {
 			
 			// build the class for the request
 			$request = new stdClass();
