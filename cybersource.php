@@ -230,26 +230,6 @@
 			
 		}
 		
-		private function create_request ( ) {
-			
-			// build the class for the request
-			$request = new stdClass();
-			$request->merchantID = $this->merchant_id;
-			$request->merchantReferenceCode = $this->reference_code;
-			
-			// some info CyberSource asks us to add for troubleshooting purposes
-			$request->clientLibrary = 'CyberSourcePHP';
-			$request->clientLibraryVersion = self::VERSION;
-			$request->clientEnvironment = php_uname();
-			
-			// this also is pretty stupid, particularly the name
-			$purchase_totals = new stdClass();
-			$purchase_totals->currency = 'USD';
-			$request->purchaseTotals = $purchase_totals;
-			
-			return $request;
-			
-		}
 		
 		private function create_items ( $request ) {
 			
@@ -385,7 +365,56 @@
 			return $response;
 			
 		}
-		
+        /**
+         * Perform cerdit action on subscribtion id
+         **/		
+        public function credit_subscription($subscription_id,$amount=null)
+        {
+            $request = $this->create_request();
+            // we want to cerdit based on subscription id
+            $cc_credit_service = new stdClass();
+            $cc_credit_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
+            $request->ccCreditService = $cc_credit_service;
+
+            // add the subscription ID that we're billing
+            $subscription_info = new stdClass();
+            $subscription_info->subscriptionID = $subscription_id;
+            $request->recurringSubscriptionInfo = $subscription_info;
+
+			// if there was an amount specified, just use it - otherwise add the individual items
+            if ( $amount !== null ) {
+                $request->purchaseTotals->grandTotalAmount = $amount;
+            }
+            else {
+                $this->create_items( $request );
+            }
+
+            $response = $this->run_transaction( $request );
+
+            return $response;
+        }
+
+        protected function create_request ( ) {
+
+            // build the class for the request
+            $request = new stdClass();
+            $request->merchantID = $this->merchant_id;
+            $request->merchantReferenceCode = $this->reference_code;
+
+            // some info CyberSource asks us to add for troubleshooting purposes
+            $request->clientLibrary = 'CyberSourcePHP';
+            $request->clientLibraryVersion = self::VERSION;
+            $request->clientEnvironment = php_uname();
+
+            // this also is pretty stupid, particularly the name
+            $purchase_totals = new stdClass();
+            $purchase_totals->currency = 'USD';
+            $request->purchaseTotals = $purchase_totals;
+
+            return $request;
+
+        }
+
 		/**
 		 * Create a new payment subscription, either by performing a $0 authorization check on the credit card or using a 
 		 * pre-created request token from an authorization request that's already been performed.
