@@ -209,47 +209,70 @@
 			
 		}
 		
-		public function items ( $items = array() ) {
-			
-			foreach ( $items as $item )  {
-				$this->add_item( $item['price'], $item['quantity'] );
-			}
-			
-			return $this;
-			
-		}
+        public function items ( $items = array() ) {
+
+            foreach ( $items as $item )  {
+                if (!empty($item['productName'])) {
+                    $product_name = $item['productName'];
+                } else {
+                    $product_name = null;
+                }
+                if (!empty($item['productSKU'])) {
+                    $merchant_product_sku = $item['productSKU'];
+                } else {
+                    $merchant_product_sku = null;
+                }
+                $this->add_item( $item['price'], $item['quantity'] ,$merchant_product_sku ,$product_name);
+            }
+
+            return $this;
+
+        }
 		
-		public function add_item ( $price, $quantity = 1 ) {
-			
-			$this->items[] = array(
-				'unitPrice' => $price,
-				'quantity' => $quantity,
-			);
-			
-			return $this;
-			
-		}
+        public function add_item ( $price, $quantity = 1, $merchant_product_sku = null, $product_name = null ) {
+            $item = 	array(
+                'unitPrice' => $price,
+                'quantity' => $quantity,
+            );
+
+            if (!is_null($product_name)) {
+                $item['productName'] = $product_name;
+            }
+
+            if (!is_null($merchant_product_sku)) {
+                $item['productSKU'] = $merchant_product_sku;
+            }
+
+            $this->items[] = $item;
+            return $this;
+
+        }
 		
 		
-		private function create_items ( $request ) {
-			
-			// there is no container for items, which annoys me
-			$request->item = array();
-			$i = 0;
-			foreach ( $this->items as $item ) {
-				$it = new stdClass();
-				$it->unitPrice = $item['unitPrice'];
-				$it->quantity = $item['quantity'];
-				$it->id = $i;
-				
-				$request->item[] = $it;
-				
-				$i++;
-			}
-			
-			return $request;
-			
-		}
+        private function create_items ( $request ) {
+            // there is no container for items, which annoys me
+            $request->item = array();
+            $i = 0;
+            foreach ( $this->items as $item ) {
+                $it = new stdClass();
+                $it->unitPrice = $item['unitPrice'];
+                $it->quantity = $item['quantity'];
+                if (!empty($item['productName'])) {
+                    $it->productName = $item['productName'];
+                } 
+                if (!empty($item['productSKU'])) {
+                    $it->productSKU = $item['productSKU'];
+                } 
+                $it->id = $i;
+
+                $request->item[] = $it;
+
+                $i++;
+            }
+
+            return $request;
+
+        }
 		
 		private function create_bill_to ( ) {
 			
@@ -496,39 +519,44 @@
 			
 		}
 		
-		/**
-		 * Charge the given Subscription ID a certain amount.
-		 * 
-		 * @param string $subscription_id The CyberSource Subscription ID to charge.
-		 * @param float $amount The dollar amount to charge.
-		 * @return stdClass The raw response object from the SOAP endpoint
-		 */
-		public function charge_subscription ( $subscription_id, $amount ) {
-			
-			$request = $this->create_request();
-			
-			// we want to perform an authorization
-			$cc_auth_service = new stdClass();
-			$cc_auth_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
-			$request->ccAuthService = $cc_auth_service;
-			
-			// and actually charge them
-			$cc_capture_service = new stdClass();
-			$cc_capture_service->run = 'true';
-			$request->ccCaptureService = $cc_capture_service;
-			
-			// actually remember to add the subscription ID that we're billing... duh!
-			$subscription_info = new stdClass();
-			$subscription_info->subscriptionID = $subscription_id;
-			$request->recurringSubscriptionInfo = $subscription_info;
-			
-			$request->purchaseTotals->grandTotalAmount = $amount;
-			
-			$response = $this->run_transaction( $request );
-			
-			return $response;
-			
-		}
+        /**
+         * Charge the given Subscription ID a certain amount.
+         * 
+         * @param string $subscription_id The CyberSource Subscription ID to charge.
+         * @param float $amount The dollar amount to charge.
+         * @return stdClass The raw response object from the SOAP endpoint
+         */
+        public function charge_subscription ( $subscription_id, $amount = null ) {
+
+            $request = $this->create_request();
+
+            // we want to perform an authorization
+            $cc_auth_service = new stdClass();
+            $cc_auth_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
+            $request->ccAuthService = $cc_auth_service;
+
+            // and actually charge them
+            $cc_capture_service = new stdClass();
+            $cc_capture_service->run = 'true';
+            $request->ccCaptureService = $cc_capture_service;
+
+            // actually remember to add the subscription ID that we're billing... duh!
+            $subscription_info = new stdClass();
+            $subscription_info->subscriptionID = $subscription_id;
+            $request->recurringSubscriptionInfo = $subscription_info;
+
+            if ( $amount !== null ) {
+                $request->purchaseTotals->grandTotalAmount = $amount;
+            }
+            else {
+                $this->create_items($request);
+            }
+
+            $response = $this->run_transaction($request);
+
+            return $response;
+
+        }
 		
 		public function update_subscription ( $subscription_id ) {
 			
