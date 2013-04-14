@@ -225,8 +225,8 @@
 				'unitPrice' => $price,
 				'quantity' => $quantity,
 			);
-
-            $item = array_merge( $item, $additional_fields);
+			
+			$item = array_merge( $item, $additional_fields);
 
 			$this->items[] = $item;	
 
