@@ -219,13 +219,17 @@
 			
 		}
 		
-		public function add_item ( $price, $quantity = 1 ) {
-			
-			$this->items[] = array(
+		public function add_item ( $price, $quantity = 1, $additional_fields = array()) {
+
+			$item = array(
 				'unitPrice' => $price,
 				'quantity' => $quantity,
 			);
 			
+			$item = array_merge( $item, $additional_fields);
+
+			$this->items[] = $item;	
+
 			return $this;
 			
 		}
