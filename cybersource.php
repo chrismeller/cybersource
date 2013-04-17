@@ -235,7 +235,7 @@
 		}
 		
 		
-		private function create_items ( $request ) {
+		protected function create_items ( $request ) {
 			
 			// there is no container for items, which annoys me
 			$request->item = array();
