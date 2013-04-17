@@ -507,7 +507,7 @@
 		 * @param float $amount The dollar amount to charge.
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function charge_subscription ( $subscription_id, $amount ) {
+		public function charge_subscription ( $subscription_id, $amount = null ) {
 			
 			$request = $this->create_request();
 			
@@ -526,8 +526,14 @@
 			$subscription_info->subscriptionID = $subscription_id;
 			$request->recurringSubscriptionInfo = $subscription_info;
 			
-			$request->purchaseTotals->grandTotalAmount = $amount;
-			
+			// if there was an amount specified, just use it - otherwise add the individual items
+			if ( $amount !== null ) {
+				$request->purchaseTotals->grandTotalAmount = $amount;
+			}
+			else {
+				$this->create_items($request);
+			}
+
 			$response = $this->run_transaction( $request );
 			
 			return $response;
@@ -679,7 +685,6 @@
 			
 			// save the request so you can get back what was generated at any point
 			$this->request = $request;
-			
 			$response = $soap->runTransaction( $request );
 			
 			// save the whole response so you can get everything back even on an exception
