@@ -1,5 +1,6 @@
 <?php
-
+	namespace CyberSource;
+	
 	class CyberSource {
 		
 		const ENV_TEST = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.67.wsdl';

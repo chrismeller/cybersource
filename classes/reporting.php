@@ -1,6 +1,8 @@
 <?php
+	
+	namespace CyberSource;
 
-	class CyberSource_Reporting {
+	class Reporting {
 
 		const ENV_TEST = 'ebctest.cybersource.com/ebctest';
 		const ENV_PRODUCTION = 'ebc.cybersource.com/ebc';
