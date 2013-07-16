@@ -939,7 +939,7 @@
 
 	}
 	
-	class CyberSource_Exception extends Exception {}
+	class CyberSource_Exception extends \Exception {}
 	
 	class CyberSource_Error_Exception extends CyberSource_Exception {}
 	class CyberSource_Declined_Exception extends CyberSource_Exception {}
