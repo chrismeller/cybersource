@@ -1,6 +1,8 @@
 <?php
+	
+	namespace CyberSource;
 
-	class CyberSource_Reporting {
+	class Reporting {
 
 		const ENV_TEST = 'ebctest.cybersource.com/ebctest';
 		const ENV_PRODUCTION = 'ebc.cybersource.com/ebc';
@@ -67,8 +69,8 @@
 		 */
 		public function payment_submission_detail ( $date = 'yesterday' ) {
 
-			if ( !$date instanceof DateTime ) {
-				$date = new DateTime($date);
+			if ( !$date instanceof \DateTime ) {
+				$date = new \DateTime($date);
 			}
 
 			// get the right host and substitute in our username and password for http basic authentication

@@ -1,0 +1,16 @@
+{
+	"name": "chrismeller/cybersource",
+	"description": "Basic interface to the Cybersource SOAP Toolkit API for processing credit transactions",
+	"license": "Apache-2.0",
+	"authors": [
+		{
+			"name": "Chris Meller",
+			"homepage": "http://chrismeller.com"
+		}
+	],
+	"autoload": {
+		"psr-0": {
+			"CyberSource\\": "classes/"
+		}
+	}
+}

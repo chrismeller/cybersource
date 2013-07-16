@@ -1,5 +1,6 @@
 <?php
-
+	namespace CyberSource;
+	
 	class CyberSource {
 		
 		const ENV_TEST = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.67.wsdl';
@@ -241,7 +242,7 @@
 			$request->item = array();
 			$i = 0;
 			foreach ( $this->items as $item ) {
-				$it = new stdClass();
+				$it = new \stdClass();
 				$it->unitPrice = $item['unitPrice'];
 				$it->quantity = $item['quantity'];
 				$it->id = $i;
@@ -258,7 +259,7 @@
 		private function create_bill_to ( ) {
 			
 			// build the billTo class
-			$bill_to = new stdClass();
+			$bill_to = new \stdClass();
 			
 			// add all the bill_to fields
 			foreach ( $this->bill_to as $k => $v ) {
@@ -272,7 +273,7 @@
 		private function create_card ( ) {
 			
 			// build the credit card class
-			$card = new stdClass();
+			$card = new \stdClass();
 			
 			foreach ( $this->card as $k => $v ) {
 				$card->$k = $v;
@@ -287,12 +288,12 @@
 			$request = $this->create_request();
 			
 			// we want to perform an authorization
-			$cc_auth_service = new stdClass();
+			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
 			$request->ccAuthService = $cc_auth_service;
 			
 			// and actually charge them
-			$cc_capture_service = new stdClass();
+			$cc_capture_service = new \stdClass();
 			$cc_capture_service->run = 'true';
 			$request->ccCaptureService = $cc_capture_service;
 			
@@ -320,7 +321,7 @@
 			
 			$request = $this->create_request();
 			
-			$capture_service = new stdClass();
+			$capture_service = new \stdClass();
 			$capture_service->run = 'true';
 			$capture_service->authRequestToken = $request_token;
 			$request->ccCaptureService = $capture_service;
@@ -351,7 +352,7 @@
 			$request = $this->create_request();
 			
 			// we want to perform an authorization
-			$cc_credit_service = new stdClass();
+			$cc_credit_service = new \stdClass();
 			$cc_credit_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
 			$cc_credit_service->captureRequestID = $request_id;
 			$request->ccCreditService = $cc_credit_service;
@@ -376,12 +377,12 @@
         {
             $request = $this->create_request();
             // we want to cerdit based on subscription id
-            $cc_credit_service = new stdClass();
+            $cc_credit_service = new \stdClass();
             $cc_credit_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
             $request->ccCreditService = $cc_credit_service;
 
             // add the subscription ID that we're billing
-            $subscription_info = new stdClass();
+            $subscription_info = new \stdClass();
             $subscription_info->subscriptionID = $subscription_id;
             $request->recurringSubscriptionInfo = $subscription_info;
 
@@ -401,7 +402,7 @@
         protected function create_request ( ) {
 
             // build the class for the request
-            $request = new stdClass();
+            $request = new \stdClass();
             $request->merchantID = $this->merchant_id;
             $request->merchantReferenceCode = $this->reference_code;
 
@@ -411,7 +412,7 @@
             $request->clientEnvironment = php_uname();
 
             // this also is pretty stupid, particularly the name
-            $purchase_totals = new stdClass();
+            $purchase_totals = new \stdClass();
             $purchase_totals->currency = 'USD';
             $request->purchaseTotals = $purchase_totals;
 
@@ -431,7 +432,7 @@
 			
 			$request = $this->create_request();
 			
-			$subscription_create = new stdClass();
+			$subscription_create = new \stdClass();
 			$subscription_create->run = 'true';
 			
 			// if there is a request token passed in, reference it
@@ -453,7 +454,7 @@
 			
 			if ( $subscription_info == null ) {
 				// specify that this is an on-demand subscription, it should not auto-bill
-				$subscription_info = new stdClass();
+				$subscription_info = new \stdClass();
 				$subscription_info->frequency = 'on-demand';
 			}
 			$request->recurringSubscriptionInfo = $subscription_info;
@@ -486,11 +487,11 @@
 			
 			$request = $this->create_request();
 			
-			$subscription_delete = new stdClass();
+			$subscription_delete = new \stdClass();
 			$subscription_delete->run = 'true';
 			$request->paySubscriptionDeleteService = $subscription_delete;
 			
-			$subscription_info = new stdClass();
+			$subscription_info = new \stdClass();
 			$subscription_info->subscriptionID = $subscription_id;
 			$request->recurringSubscriptionInfo = $subscription_info;
 			
@@ -512,17 +513,17 @@
 			$request = $this->create_request();
 			
 			// we want to perform an authorization
-			$cc_auth_service = new stdClass();
+			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
 			$request->ccAuthService = $cc_auth_service;
 			
 			// and actually charge them
-			$cc_capture_service = new stdClass();
+			$cc_capture_service = new \stdClass();
 			$cc_capture_service->run = 'true';
 			$request->ccCaptureService = $cc_capture_service;
 			
 			// actually remember to add the subscription ID that we're billing... duh!
-			$subscription_info = new stdClass();
+			$subscription_info = new \stdClass();
 			$subscription_info->subscriptionID = $subscription_id;
 			$request->recurringSubscriptionInfo = $subscription_info;
 			
@@ -545,12 +546,12 @@
 			$request = $this->create_request();
 			
 			// we want to update!
-			$subscription_update = new stdClass();
+			$subscription_update = new \stdClass();
 			$subscription_update->run = 'true';
 			$request->paySubscriptionUpdateService = $subscription_update;
 			
 			// add the subscription id that we're billing
-			$subscription_info = new stdClass();
+			$subscription_info = new \stdClass();
 			$subscription_info->subscriptionID = $subscription_id;
 			$request->recurringSubscriptionInfo = $subscription_info;
 			
@@ -568,12 +569,12 @@
 			$request = $this->create_request();
 			
 			// we want to retrieve!
-			$subscription_retrieve = new stdClass();
+			$subscription_retrieve = new \stdClass();
 			$subscription_retrieve->run = 'true';
 			$request->paySubscriptionRetrieveService = $subscription_retrieve;
 			
 			// the subscription ID we want to fetch data for
-			$subscription_info = new stdClass();
+			$subscription_info = new \stdClass();
 			$subscription_info->subscriptionID = $subscription_id;
 			$request->recurringSubscriptionInfo = $subscription_info;
 			
@@ -592,7 +593,7 @@
 			
 			$request = $this->create_request();
 			
-			$cc_auth_service = new stdClass();
+			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';
 			$request->ccAuthService = $cc_auth_service;
 			
@@ -617,7 +618,7 @@
 			
 			$request = $this->create_request();
 			
-			$cc_auth_service = new stdClass();
+			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';
 			$request->ccAuthService = $cc_auth_service;
 			
@@ -674,7 +675,7 @@
 
 			try {
 				// create the soap client
-				$soap = new SoapClient( $this->environment, $soap_options );
+				$soap = new \SoapClient( $this->environment, $soap_options );
 			}
 			catch ( SoapFault $sf ) {
 				throw new CyberSource_Connection_Exception( $sf->getMessage(), $sf->getCode() );
@@ -771,7 +772,7 @@
 			
 			foreach ( $fields as $field ) {
 				if ( !isset( $info[ $field ] ) ) {
-					throw new InvalidArgumentException( 'The bill to field ' . $field . ' is missing!' );
+					throw new \InvalidArgumentException( 'The bill to field ' . $field . ' is missing!' );
 				}
 			}
 			
@@ -817,26 +818,26 @@
 			$wsse_namespace = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
 			$type_namespace = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText';
 			
-			$user = new SoapVar( $this->merchant_id, XSD_STRING, null, $wsse_namespace, null, $wsse_namespace );
-			$pass = new SoapVar( $this->transaction_id, XSD_STRING, null, $type_namespace, null, $wsse_namespace );
+			$user = new \SoapVar( $this->merchant_id, XSD_STRING, null, $wsse_namespace, null, $wsse_namespace );
+			$pass = new \SoapVar( $this->transaction_id, XSD_STRING, null, $type_namespace, null, $wsse_namespace );
 			
 			// create the username token container object
-			$username_token = new stdClass();
+			$username_token = new \stdClass();
 			$username_token->Username = $user;
 			$username_token->Password = $pass;
 			
 			// convert the username token object into a soap var
-			$username_token = new SoapVar( $username_token, SOAP_ENC_OBJECT, null, $wsse_namespace, 'UsernameToken', $wsse_namespace );
+			$username_token = new \SoapVar( $username_token, SOAP_ENC_OBJECT, null, $wsse_namespace, 'UsernameToken', $wsse_namespace );
 			
 			// create the security container object
-			$security = new stdClass();
+			$security = new \stdClass();
 			$security->UsernameToken = $username_token;
 			
 			// convert the security container object into a soap var
-			$security = new SoapVar( $security, SOAP_ENC_OBJECT, null, $wsse_namespace, 'Security', $wsse_namespace );
+			$security = new \SoapVar( $security, SOAP_ENC_OBJECT, null, $wsse_namespace, 'Security', $wsse_namespace );
 			
 			// create the header out of the security soap var
-			$header = new SoapHeader( $wsse_namespace, 'Security', $security, true );
+			$header = new \SoapHeader( $wsse_namespace, 'Security', $security, true );
 			
 			// add the headers to the soap client
 			$soap->__setSoapHeaders( $header );
@@ -892,7 +893,7 @@
 
 			$request = $this->create_request();
 
-			$cc_auth_reversal_service = new stdClass();
+			$cc_auth_reversal_service = new \stdClass();
 			$cc_auth_reversal_service->run = 'true';
 			$cc_auth_reversal_service->authRequestID = $request_id;
 			$request->ccAuthReversalService = $cc_auth_reversal_service;
@@ -925,7 +926,7 @@
 
 			$request = $this->create_request();
 
-			$void_service = new stdClass();
+			$void_service = new \stdClass();
 			$void_service->run = 'true';
 			$void_service->voidRequestID = $request_id;
 			$request->voidService = $void_service;
@@ -938,7 +939,7 @@
 
 	}
 	
-	class CyberSource_Exception extends Exception {}
+	class CyberSource_Exception extends \Exception {}
 	
 	class CyberSource_Error_Exception extends CyberSource_Exception {}
 	class CyberSource_Declined_Exception extends CyberSource_Exception {}

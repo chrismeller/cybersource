@@ -1,8 +1,6 @@
 <?php
 
-require 'cybersource.php';
-
-class CybersourceExtended extends CyberSource {
+class CybersourceExtended extends \CyberSource\CyberSource {
 
     public static $translation_fields = array(
         'product_name' => 'productName',
