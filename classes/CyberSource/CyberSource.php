@@ -6,7 +6,7 @@
 		const ENV_TEST = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.67.wsdl';
 		const ENV_PRODUCTION = 'https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.67.wsdl';
 		
-		const VERSION = '0.2';
+		const VERSION = '0.3';
 		const API_VERSION = '1.67';
 		
 		/**
