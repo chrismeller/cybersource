@@ -1,6 +1,6 @@
 <?php
 
-	require('main.php');
+	require( dirname( __FILE__ ) . '/main.php' );
 	
 	try {
 		$subscription = $c->retrieve_subscription( '3099774717110176056428' );

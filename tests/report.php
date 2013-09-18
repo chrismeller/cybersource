@@ -1,8 +1,8 @@
 <?php
 
-	require('main.php');
+	require( dirname( __FILE__ ) . '/main.php' );
 
-	$cr = new CyberSource_Reporting( $merchant_id, $username, $password, CyberSource_Reporting::ENV_PRODUCTION );
+	$cr = new CyberSource\Reporting( $merchant_id, $username, $password, CyberSource\Reporting::ENV_TEST );
 	$payments = $cr->payment_submission_detail();
 
 	$total = 0;

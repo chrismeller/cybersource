@@ -1,5 +1,5 @@
 <?php
-	
+
 	namespace CyberSource;
 
 	class Reporting {
@@ -15,6 +15,13 @@
 		public $merchant_id;
 		public $username;
 		public $password;
+
+		private $methods_to_reports = array(
+			'payment_submission_detail' 	=> 'PaymentSubmissionDetailReport',
+			'subscription_detail' 			=> 'SubscriptionDetailReport',
+			'transaction_detail' 			=> 'TransactionDetailReport',
+			'transaction_exception_detail' 	=> 'TransactionExceptionDetailReport',
+		);
 
 		public function __construct ( $merchant_id = null, $username = null, $password = null, $environment = self::ENV_TEST ) {
 
@@ -60,21 +67,59 @@
 		}
 
 		/**
-		 * Gets the Payment Submission Detail Report from CyberSource for the given day.
+		 * Magic method to provide backwards compatibility.
 		 *
-		 * @param  string $date Any string that's compatible with DateTime.
+		 * Thanks to this, reports can be executed by calling an appropriate method name
+		 * and specifying the day. For example:
+		 *
+		 * $cr->payment_submission_detail( '2013-09-18' );
+		 *
+		 * For available method names see $this->methods_to_reports
+		 *
+		 * @param string $method_name 	Name of the method that was called.
+		 * @param array $arguments		List of arguments passed to the call.
+		 * @return array       			An array of the records returned (in case you call a valid method).
+		 */
+		public function __call ( $method_name, $arguments ) {
+
+			if ( isset( $this->methods_to_reports[$method_name] ) )
+			{
+				array_unshift( $arguments, $this->methods_to_reports[$method_name] );
+				return call_user_func_array( array( $this, 'execute_report' ), $arguments );
+			}
+
+			$class = get_class( $this );
+			$trace = debug_backtrace();
+			$file = $trace[0]['file'];
+			$line = $trace[0]['line'];
+			trigger_error( "Call to undefined method $class::$method() in $file on line $line", E_USER_ERROR );
+		}
+
+		/**
+		 * Gets a daily report from CyberSource for the given day.
+		 *
+		 * @param  string $report_name 	The name of the report to get.
+		 * @param  string $date 		Any string that's compatible with DateTime.
 		 * @return array       An array of the records returned, as parsed from the CSV.
 		 * @throws CyberSource_Report_Not_Found_Exception
 		 * @throws CyberSource_Report_Exception
 		 */
-		public function payment_submission_detail ( $date = 'yesterday' ) {
+		public function execute_report ( $report_name, $date = 'yesterday' ) {
 
 			if ( !$date instanceof \DateTime ) {
 				$date = new \DateTime($date);
 			}
 
 			// get the right host and substitute in our username and password for http basic authentication
-			$url = 'https://' . $this->username . ':' . $this->password . '@' . $this->environment . '/DownloadReport/' . $date->format('Y') . '/' . $date->format('m') . '/' . $date->format('d') . '/' . $this->merchant_id . '/PaymentSubmissionDetailReport.csv';
+			$url =
+				'https://' .
+				$this->username . ':' .
+				$this->password . '@' .
+				$this->environment .
+				'/DownloadReport/' .
+				$date->format('Y/m/d/') .
+				$this->merchant_id . '/' .
+				$report_name . '.csv';
 
 			$result = @file_get_contents( $url );
 

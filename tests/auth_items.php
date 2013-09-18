@@ -1,6 +1,6 @@
 <?php
 
-	require('main.php');
+	require( dirname( __FILE__ ) . '/main.php' );
 	
 	$c->card( '4111111111111111', '12', '2013', '123' )
 		->bill_to( array(
