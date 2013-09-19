@@ -2,6 +2,9 @@
 
 	namespace CyberSource;
 
+	// To have the exceptions loaded.
+	require dirname( __FILE__ ) . '/CyberSource.php';
+
 	class Reporting {
 
 		const ENV_TEST = 'ebctest.cybersource.com/ebctest';
