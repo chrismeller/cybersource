@@ -317,13 +317,23 @@
 			
 		}
 		
-		public function capture ( $request_token = null, $amount = null ) {
+		public function capture ( $request_token = null, $amount = null, $request_id = null ) {
 			
 			$request = $this->create_request();
 			
 			$capture_service = new \stdClass();
 			$capture_service->run = 'true';
 			$capture_service->authRequestToken = $request_token;
+
+			if ( isset( $request_id ) )
+			{
+				$capture_service->authRequestID = $request_id;
+			}
+			else
+			{
+				$capture_service->authRequestToken = $request_token;
+			}
+
 			$request->ccCaptureService = $capture_service;
 			
 			// if there was an amount specified, just use it - otherwise add the individual items
