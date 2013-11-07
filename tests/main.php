@@ -1,10 +1,8 @@
 <?php
 
-	require('../cybersource.php');
-	require('../cybersource_reporting.php');
+	require( dirname( __FILE__ ) . '/../vendor/autoload.php' );
+	require( dirname( __FILE__ ) . '/config.php' );
 
-	require('config.php');
-
-	$c = CyberSource::factory( $merchant_id, $transaction_id, CyberSource::ENV_TEST );
+	$c = CyberSource\CyberSource::factory( $merchant_id, $transaction_id, CyberSource\CyberSource::ENV_TEST );
 
 ?>

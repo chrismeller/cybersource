@@ -1,6 +1,6 @@
 <?php
 
-	require('main.php');
+	require( dirname( __FILE__ ) . '/main.php' );
 	
 	try {
 		$c->charge_subscription( '3099774717110176056428', '75' );

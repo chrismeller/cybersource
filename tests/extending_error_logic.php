@@ -3,7 +3,7 @@
 	error_reporting(-1);
 	ini_set('display_errors', true);
 
-	require('main.php');
+	require( dirname( __FILE__ ) . '/main.php' );
 	
 	class Custom_CyberSource extends CyberSource {
 		
