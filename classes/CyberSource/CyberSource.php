@@ -17,6 +17,7 @@
 		public $merchant_id;
 		public $transaction_id;
 		public $reference_code = 'Unknown';		// for backend transaction reporting
+		public $fail_on_unaccapted_transaction = true;
 		
 		public $bill_to = array();
 		public $card = array();
@@ -177,6 +178,12 @@
 		public function reference_code ( $code ) {
 			$this->reference_code = $code;
 			
+			return $this;
+		}
+
+		public function fail_on_unaccapted_transaction ( $fail_on_unaccapted_transaction ) {
+			$this->fail_on_unaccapted_transaction = $fail_on_unaccapted_transaction;
+
 			return $this;
 		}
 		
@@ -701,7 +708,7 @@
 			// save the whole response so you can get everything back even on an exception
 			$this->response = $response;
 			
-			if ( $response->decision != 'ACCEPT' ) {
+			if ( $this->fail_on_unaccapted_transaction && $response->decision != 'ACCEPT' ) {
 				
 				// customize the error message if the reason indicates a field is missing
 				if ( $response->reasonCode == 101 ) {
@@ -738,11 +745,11 @@
 				// otherwise, just throw a generic declined exception
 				if ( $response->decision == 'ERROR' ) {
 					// note that ERROR means some kind of system error or the processor rejected invalid data - it probably doesn't mean the card was actually declined
-					throw new CyberSource_Error_Exception( $this->result_codes[ $response->reasonCode ], $response->reasonCode );
+					throw new CyberSource_Error_Exception( @$this->result_codes[ $response->reasonCode ], $response->reasonCode );
 				}
 				else {
 					// declined, however, actually means declined. this would be decision 'REJECT', btw.
-					throw new CyberSource_Declined_Exception( $this->result_codes[ $response->reasonCode ], $response->reasonCode );
+					throw new CyberSource_Declined_Exception( @$this->result_codes[ $response->reasonCode ], $response->reasonCode );
 				}
 			}
 			
