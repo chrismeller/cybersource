@@ -17,7 +17,6 @@
 		public $merchant_id;
 		public $transaction_id;
 		public $reference_code = 'Unknown';		// for backend transaction reporting
-		public $fail_on_unaccapted_transaction = true;
 		
 		public $bill_to = array();
 		public $card = array();
@@ -181,12 +180,6 @@
 			return $this;
 		}
 
-		public function fail_on_unaccapted_transaction ( $fail_on_unaccapted_transaction ) {
-			$this->fail_on_unaccapted_transaction = $fail_on_unaccapted_transaction;
-
-			return $this;
-		}
-		
 		public function card ( $number, $expiration_month, $expiration_year, $cvn_code = null, $card_type = null ) {
 			
 			$this->card = array(
@@ -248,10 +241,23 @@
 			// there is no container for items, which annoys me
 			$request->item = array();
 			$i = 0;
+			$validFields = array(
+				'unitPrice',
+				'quantity',
+				'productCode',
+				'productName',
+				'productSKU',
+				'taxAmount',
+			);
+
 			foreach ( $this->items as $item ) {
 				$it = new \stdClass();
-				$it->unitPrice = $item['unitPrice'];
-				$it->quantity = $item['quantity'];
+				foreach ( $validFields as $validField ) {
+					if ( isset( $item[$validField] ) ) {
+						$it->{$validField} = $item[$validField];
+					}
+				}
+
 				$it->id = $i;
 				
 				$request->item[] = $it;
@@ -708,7 +714,7 @@
 			// save the whole response so you can get everything back even on an exception
 			$this->response = $response;
 			
-			if ( $this->fail_on_unaccapted_transaction && $response->decision != 'ACCEPT' ) {
+			if ( $response->decision != 'ACCEPT' ) {
 				
 				// customize the error message if the reason indicates a field is missing
 				if ( $response->reasonCode == 101 ) {
@@ -738,18 +744,17 @@
 					else {
 						$invalid_fields = $response->invalidField;
 					}
-					
 					throw new CyberSource_Invalid_Field_Exception( $invalid_fields, 102 );
 				}
 				
 				// otherwise, just throw a generic declined exception
 				if ( $response->decision == 'ERROR' ) {
 					// note that ERROR means some kind of system error or the processor rejected invalid data - it probably doesn't mean the card was actually declined
-					throw new CyberSource_Error_Exception( @$this->result_codes[ $response->reasonCode ], $response->reasonCode );
+					throw new CyberSource_Error_Exception( $this->result_codes[ $response->reasonCode ], $response->reasonCode );
 				}
 				else {
 					// declined, however, actually means declined. this would be decision 'REJECT', btw.
-					throw new CyberSource_Declined_Exception( @$this->result_codes[ $response->reasonCode ], $response->reasonCode );
+					throw new CyberSource_Declined_Exception( $this->result_codes[ $response->reasonCode ], $response->reasonCode );
 				}
 			}
 			
