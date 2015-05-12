@@ -516,9 +516,10 @@
 		 * 
 		 * @param string $subscription_id The CyberSource Subscription ID to charge.
 		 * @param float $amount The dollar amount to charge.
+		 * @param boolean $auto_settle Set to false if you don't want to settle the payment automatically
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function charge_subscription ( $subscription_id, $amount = null ) {
+		public function charge_subscription ( $subscription_id, $amount = null, $auto_settle = true ) {
 			
 			$request = $this->create_request();
 			
@@ -529,7 +530,7 @@
 			
 			// and actually charge them
 			$cc_capture_service = new \stdClass();
-			$cc_capture_service->run = 'true';
+			$cc_capture_service->run = $auto_settle ? 'true' : 'false';
 			$request->ccCaptureService = $cc_capture_service;
 			
 			// actually remember to add the subscription ID that we're billing... duh!
