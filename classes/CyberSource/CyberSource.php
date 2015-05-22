@@ -179,7 +179,7 @@
 			
 			return $this;
 		}
-		
+
 		public function card ( $number, $expiration_month, $expiration_year, $cvn_code = null, $card_type = null ) {
 			
 			$this->card = array(
@@ -241,10 +241,23 @@
 			// there is no container for items, which annoys me
 			$request->item = array();
 			$i = 0;
+			$validFields = array(
+				'unitPrice',
+				'quantity',
+				'productCode',
+				'productName',
+				'productSKU',
+				'taxAmount',
+			);
+
 			foreach ( $this->items as $item ) {
 				$it = new \stdClass();
-				$it->unitPrice = $item['unitPrice'];
-				$it->quantity = $item['quantity'];
+				foreach ( $validFields as $validField ) {
+					if ( isset( $item[$validField] ) ) {
+						$it->{$validField} = $item[$validField];
+					}
+				}
+
 				$it->id = $i;
 				
 				$request->item[] = $it;
@@ -516,9 +529,10 @@
 		 * 
 		 * @param string $subscription_id The CyberSource Subscription ID to charge.
 		 * @param float $amount The dollar amount to charge.
+		 * @param boolean $auto_settle Set to false if you don't want to settle the payment automatically
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function charge_subscription ( $subscription_id, $amount = null ) {
+		public function charge_subscription ( $subscription_id, $amount = null, $auto_settle = true ) {
 			
 			$request = $this->create_request();
 			
@@ -529,7 +543,7 @@
 			
 			// and actually charge them
 			$cc_capture_service = new \stdClass();
-			$cc_capture_service->run = 'true';
+			$cc_capture_service->run = $auto_settle ? 'true' : 'false';
 			$request->ccCaptureService = $cc_capture_service;
 			
 			// actually remember to add the subscription ID that we're billing... duh!
@@ -731,7 +745,6 @@
 					else {
 						$invalid_fields = $response->invalidField;
 					}
-					
 					throw new CyberSource_Invalid_Field_Exception( $invalid_fields, 102 );
 				}
 				
