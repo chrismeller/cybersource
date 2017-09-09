@@ -2,23 +2,24 @@
 
 	require( dirname( __FILE__ ) . '/main.php' );
 
-	$c->card( '4111111111111111', '12', '2013', '123' )
+	$c->card( '4111111111111111', '12', '2022', '123' )
 		->bill_to( array(
 			'firstName' => 'John',
-			'lastName' => 'Tester',
+			'lastName' => 'Doe',
 			'street1' => '123 Main Street',
 			'city' => 'Columbia',
 			'state' => 'SC',
 			'postalCode' => '29201',
 			'country' => 'US',
-			'email' => 'john.tester@example.com',
+			'email' => 'john.doe@example.com',
 		) );
-	$c->authorize( '5.55' );
 
+	$c->reference_code( time() );
+	$c->authorize('5.55');
 
 	echo '<pre>';
 	print_r( $c->request );
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOF

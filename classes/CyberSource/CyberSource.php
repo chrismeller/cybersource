@@ -1,13 +1,14 @@
 <?php
+
 	namespace CyberSource;
 	
 	class CyberSource {
 		
-		const ENV_TEST = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.67.wsdl';
-		const ENV_PRODUCTION = 'https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.67.wsdl';
+		const ENV_TEST = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.141.wsdl';
+		const ENV_PRODUCTION = 'https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.141.wsdl';
 		
-		const VERSION = '0.3';
-		const API_VERSION = '1.67';
+		const VERSION     = '0.3';
+		const API_VERSION = '1.141';
 		
 		/**
 		 * @var string The URL to the WSDL endpoint for the environment we're running in (test or production), as stored in self::ENV_* constants.
@@ -15,12 +16,11 @@
 		public $environment = self::ENV_TEST;
 		
 		public $merchant_id;
-		public $transaction_id;
+		public $transaction_key;
 		public $reference_code = 'Unknown';		// for backend transaction reporting
 		
 		public $bill_to = array();
 		public $card = array();
-		
 		public $items = array();
 		
 		/**
@@ -122,38 +122,35 @@
 		);
 		
 		public $card_types = array(
-			'Visa' => '001',
-			'MasterCard' => '002',
+			'Visa'             => '001',
+			'MasterCard'       => '002',
 			'American Express' => '003',
-			'Discover' => '004',
-			'Diners Club' => '005',
-			'Carte Blanche' => '006',
-			'JCB' => '007',
+			'Discover'         => '004',
+			'Diners Club'      => '005',
+			'Carte Blanche'    => '006',
+			'JCB'              => '007',
 		);
 		
 		public $test_cards = array(
-			'amex' => '378282246310005',
-			'discover' => '6011111111111117',
+			'amex'       => '378282246310005',
+			'discover'   => '6011111111111117',
 			'mastercard' => '5555555555554444',
-			'visa' => '4111111111111111',
+			'visa'       => '4111111111111111',
 		);
 		
-		public function __construct ( $merchant_id = null, $transaction_id = null, $environment = self::ENV_TEST ) {
+		public function __construct ( $merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST ) {
 			
 			$this->merchant_id( $merchant_id );
-			$this->transaction_id( $transaction_id );
-			
+			$this->transaction_key( $transaction_key );
 			$this->environment( $environment );
-			
 		}
 		
-		public static function factory ( $merchant_id = null, $transaction_id = null, $environment = self::ENV_TEST ) {
+		public static function factory ( $merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST ) {
 			
 			$class = __CLASS__;
-			$object = new $class( $merchant_id, $transaction_id, $environment );
+			$object = new $class( $merchant_id, $transaction_key, $environment );
 			
 			return $object;
-			
 		}
 		
 		public function merchant_id ( $id ) {
@@ -162,8 +159,8 @@
 			return $this;
 		}
 		
-		public function transaction_id ( $id ) {
-			$this->transaction_id = $id;
+		public function transaction_key ( $id ) {
+			$this->transaction_key = $id;
 			
 			return $this;
 		}
@@ -183,9 +180,9 @@
 		public function card ( $number, $expiration_month, $expiration_year, $cvn_code = null, $card_type = null ) {
 			
 			$this->card = array(
-				'accountNumber' => $number,
+				'accountNumber'   => $number,
 				'expirationMonth' => $expiration_month,
-				'expirationYear' => $expiration_year,
+				'expirationYear'  => $expiration_year,
 			);
 			
 			// if a cvn code was supplied, use it
@@ -829,7 +826,7 @@
 			$type_namespace = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText';
 			
 			$user = new \SoapVar( $this->merchant_id, XSD_STRING, null, $wsse_namespace, null, $wsse_namespace );
-			$pass = new \SoapVar( $this->transaction_id, XSD_STRING, null, $type_namespace, null, $wsse_namespace );
+			$pass = new \SoapVar( $this->transaction_key, XSD_STRING, null, $type_namespace, null, $wsse_namespace );
 			
 			// create the username token container object
 			$username_token = new \stdClass();
@@ -957,4 +954,4 @@
 	class CyberSource_Invalid_Field_Exception extends CyberSource_Exception {}
 	class CyberSource_Missing_Field_Exception extends CyberSource_Exception {}
 
-?>
+// EOF

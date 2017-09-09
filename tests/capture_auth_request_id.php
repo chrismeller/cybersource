@@ -4,7 +4,8 @@
 
 	try {
 		// Pass transaction ID as string to avoid MAX_INT problems.
-		$c->capture( null, '96', '323424325345255243'  );
+		$c->reference_code('1504975625');
+		$c->capture( null, '5.55', '5049756376926336803008');
 	}
 	catch ( CyberSource_Declined_Exception $e ) {
 		echo 'Transaction declined';

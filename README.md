@@ -29,14 +29,16 @@ Usage
 =====
 Include the class in your code and instantiate the ``CyberSource`` class with your Merchant ID and Transaction ID:
 
-	$c = new CyberSource( $merchant_id, $transaction_id );
+
+	$c = new CyberSource($merchant_id, $transaction_id);
 
 A factory pattern is also provided, for easy method chaining:
 
-	$result = CyberSource::factory( $merchant_id, $transaction_id )
-		->card( '4111111111111111', '12', '2013', '123' )
-		->add_item( 5 )
-		->charge();
+	$result = CyberSource::factory($merchant_id, $transaction_id)
+	           ->card('4111111111111111', '12', '2013', '123')
+	           ->add_item(5)
+	           ->charge();
+
 
 Examples
 --------
@@ -44,13 +46,13 @@ There are several invidivual examples available in the ``tests`` directory demon
 
 To run the examples first create a file under `tests/config.php` with the following keys:
 
-```
+```php
 <?php
 
-$merchant_id = 'xxx';
+$merchant_id    = 'xxx';
 $transaction_id = 'yyy';
-$username = 'zzz';
-$password = 'vvv';
+$username       = 'zzz';
+$password       = 'vvv';
 ```
 
 Then run:

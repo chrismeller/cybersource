@@ -2,7 +2,7 @@
 
 	require( dirname( __FILE__ ) . '/main.php' );
 	
-	$c->card( '4111111111111111', '12', '2013', '123' )
+	$c->card( '4111111111111111', '12', '2022', '123' )
 		->bill_to( array(
 			'firstName' => 'John',
 			'lastName' => 'Tester',
@@ -14,6 +14,7 @@
 			'email' => 'john.tester@example.com',
 		) );
 	
+	$c->reference_code( time() );
 	$auth_response = $c->authorize( '5.55' );
 	
 	if ( !isset( $auth_response->requestToken ) ) {
