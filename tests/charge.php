@@ -2,7 +2,7 @@
 
 	require( dirname( __FILE__ ) . '/main.php' );
 	
-	$c->card( '4111111111111111', '12', '2022', '123' )
+	$c->card( '5555555555554444', '12', '2022', '123' )
 		->bill_to( array(
 			'firstName' => 'John',
 			'lastName' => 'Doe',
@@ -13,13 +13,11 @@
 			'country' => 'US',
 			'email' => 'john.doe@example.com',
 		) )
-		->add_item( 5 )
-		->add_item( 10 )
-		->add_item( 1, 2 )
+		->add_item( 5, 2 )
 		->add_item( 1.25 );
 	
 	$c->reference_code( time() );
-	$c->charge();
+	$c->charge(null, 'THB');
 	
 	
 	echo '<pre>';
@@ -27,4 +25,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOL

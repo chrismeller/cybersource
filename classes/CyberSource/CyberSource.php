@@ -316,7 +316,7 @@
 			
 		}
 		
-		public function capture ($request_token = null, $amount = null, $request_id = null, $currency = null) {
+		public function capture ($request_token = null, $amount = null, $currency = null, $request_id = null) {
 			
 			$request = $this->create_request($currency);
 			
@@ -328,10 +328,10 @@
 			{
 				$capture_service->authRequestID = $request_id;
 			}
-			else
-			{
-				$capture_service->authRequestToken = $request_token;
-			}
+			// else
+			// {
+			// 	$capture_service->authRequestToken = $request_token;
+			// }
 
 			$request->ccCaptureService = $capture_service;
 			

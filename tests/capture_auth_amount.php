@@ -7,6 +7,7 @@
 			'firstName' => 'John',
 			'lastName' => 'Tester',
 			'street1' => '123 Main Street',
+			'street2' => 'Apple Condo',
 			'city' => 'Columbia',
 			'state' => 'SC',
 			'postalCode' => '29201',
@@ -15,14 +16,14 @@
 		) );
 	
 	$c->reference_code( time() );
-	$auth_response = $c->authorize( '5.55' );
+	$auth_response = $c->authorize( '5.55', 'THB');
 	
 	if ( !isset( $auth_response->requestToken ) ) {
 		die('Authorization seems to have failed!');
 	}
 	
 	try {
-		$c->capture( $auth_response->requestToken, '5' );
+		$c->capture($auth_response->requestToken, '5', 'THB');
 	}
 	catch ( CyberSource_Declined_Exception $e ) {
 		echo 'Transaction declined';
@@ -33,4 +34,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOL
