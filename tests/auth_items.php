@@ -12,6 +12,7 @@
 			'postalCode' => '29201',
 			'country' => 'US',
 			'email' => 'john.doe@example.com',
+			'ipAddress' => '127.0.0.1'
 		) )
 		->add_item( 5 )
 		->add_item( 10 )
@@ -19,7 +20,7 @@
 		->add_item( 1.25 );
 
 	$c->reference_code( time() );
-	$c->authorize();
+	$c->authorize(null, 'THB');
 	
 	
 	echo '<pre>';

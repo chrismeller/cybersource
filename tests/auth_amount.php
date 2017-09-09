@@ -7,6 +7,7 @@
 			'firstName' => 'John',
 			'lastName' => 'Doe',
 			'street1' => '123 Main Street',
+			'street2' => 'Apple Building',
 			'city' => 'Columbia',
 			'state' => 'SC',
 			'postalCode' => '29201',
@@ -15,7 +16,9 @@
 		) );
 
 	$c->reference_code( time() );
-	$c->authorize('5.55');
+	
+	// $c->authorize('5.55'); // USD
+	$c->authorize('5.55', 'THB');
 
 	echo '<pre>';
 	print_r( $c->request );

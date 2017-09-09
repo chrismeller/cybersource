@@ -22,6 +22,8 @@
 		public $bill_to = array();
 		public $card    = array();
 		public $items   = array();
+
+		public $default_currency = 'USD';
 		
 		/**
 		 * @var stdClass The generated SOAP request, saved immediately before a transaction is run.
@@ -280,9 +282,9 @@
 			
 		}
 		
-		public function charge ( $amount = null ) {
+		public function charge ( $amount = null, $currency = null) {
 			
-			$request = $this->create_request();
+			$request = $this->create_request($currency);
 			
 			// we want to perform an authorization
 			$cc_auth_service = new \stdClass();
@@ -314,9 +316,9 @@
 			
 		}
 		
-		public function capture ( $request_token = null, $amount = null, $request_id = null ) {
+		public function capture ($request_token = null, $amount = null, $request_id = null, $currency = null) {
 			
-			$request = $this->create_request();
+			$request = $this->create_request($currency);
 			
 			$capture_service = new \stdClass();
 			$capture_service->run = 'true';
@@ -354,9 +356,9 @@
 		 * @param  int $amount     The amount to credit. Leave it null to use the list of items already assigned to the current object instead.
 		 * @return object             The response from CyberSource.
 		 */
-		public function credit ( $request_id, $amount = null ) {
+		public function credit ($request_id, $amount = null, $currency = null) {
 			
-			$request = $this->create_request();
+			$request = $this->create_request($currency);
 			
 			// we want to perform an authorization
 			$cc_credit_service = new \stdClass();
@@ -380,9 +382,9 @@
         /**
          * Perform cerdit action on subscribtion id
          **/		
-        public function credit_subscription($subscription_id, $amount=null)
+        public function credit_subscription($subscription_id, $amount = null, $currency = null)
         {
-            $request = $this->create_request();
+            $request = $this->create_request($currency);
             // we want to cerdit based on subscription id
             $cc_credit_service = new \stdClass();
             $cc_credit_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
@@ -406,7 +408,7 @@
             return $response;
         }
 
-        protected function create_request ( ) {
+        protected function create_request ($currency = null) {
 
             // build the class for the request
             $request = new \stdClass();
@@ -420,7 +422,10 @@
 
             // this also is pretty stupid, particularly the name
             $purchase_totals = new \stdClass();
-            $purchase_totals->currency = 'USD';
+
+            //$purchase_totals->currency = $this->default_currency;
+            $purchase_totals->currency = ($currency != null) ? $currency : $this->default_currency;
+
             $request->purchaseTotals = $purchase_totals;
 
             return $request;
@@ -435,7 +440,7 @@
 		 * @param boolean|null $auto_authorize Set to false to enable the disableAutoAuth flag to avoid an authorization and simply store the card. The default (null) means to omit the value, which means it'll use the setting on the account. Set to true to force an authorization, whether the account requires it or not.
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function create_subscription ( $request_id = null, $auto_authorize = null, $subscription_info = null ) {
+		public function create_subscription ($request_id = null, $auto_authorize = null, $subscription_info = null) {
 			
 			$request = $this->create_request();
 			
@@ -496,7 +501,7 @@
 		 * @param string $subscription_id The CyberSource Subscription ID to delete.
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function delete_subscription ( $subscription_id ) {
+		public function delete_subscription ($subscription_id) {
 			
 			$request = $this->create_request();
 			
@@ -521,9 +526,9 @@
 		 * @param float $amount The dollar amount to charge.
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function charge_subscription ( $subscription_id, $amount = null ) {
+		public function charge_subscription ($subscription_id, $amount = null, $currency = null) {
 			
-			$request = $this->create_request();
+			$request = $this->create_request($currency);
 			
 			// we want to perform an authorization
 			$cc_auth_service = new \stdClass();
@@ -554,7 +559,7 @@
 			
 		}
 		
-		public function update_subscription ( $subscription_id ) {
+		public function update_subscription ($subscription_id) {
 			
 			$request = $this->create_request();
 			
@@ -577,7 +582,7 @@
 			
 		}
 		
-		public function retrieve_subscription ( $subscription_id ) {
+		public function retrieve_subscription ($subscription_id) {
 			
 			$request = $this->create_request();
 			
@@ -602,7 +607,7 @@
 		 * 
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function validate_card ( ) {
+		public function validate_card () {
 			
 			$request = $this->create_request();
 			
@@ -627,9 +632,9 @@
 			
 		}
 		
-		public function authorize ( $amount = null ) {
+		public function authorize ($amount = null, $currency = null) {
 			
-			$request = $this->create_request();
+			$request = $this->create_request($currency);
 			
 			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';
