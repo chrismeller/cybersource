@@ -479,14 +479,14 @@
 			}
 			
 			$response = $this->run_transaction( $request );
-			$subscriptionID = null;
+			// $subscriptionID = null;
 
-			if ($response != null) {
-				$subscriptionID = $response->paySubscriptionCreateReply->subscriptionID;
-			}
+			// if ($response != null) {
+			// 	$subscriptionID = $response->paySubscriptionCreateReply->subscriptionID;
+			// }
 			
 			// return just the subscription ID from the response
-			return $subscriptionID;
+			return $response;
 			
 		}
 		

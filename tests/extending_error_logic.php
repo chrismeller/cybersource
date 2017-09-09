@@ -1,11 +1,12 @@
 <?php
 
-	error_reporting(-1);
-	ini_set('display_errors', true);
+	error_reporting(0);
+	ini_set('display_errors', false);
 
-	require( dirname( __FILE__ ) . '/main.php' );
-	
-	class Custom_CyberSource extends CyberSource {
+	require( dirname( __FILE__ ) . '/../vendor/autoload.php' );
+	require( dirname( __FILE__ ) . '/config.php' );
+
+	class Custom_CyberSource extends \CyberSource\CyberSource {
 		
 		/**
 		 * @var $test_amounts An array of reasonCode -> Amount that triggers it.
@@ -16,10 +17,10 @@
 			'200' => '5019.00',		// GPN Only
 		);
 		
-		public static function factory ( $merchant_id = null, $transaction_id = null, $environment = self::ENV_TEST ) {
+		public static function factory ( $merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST ) {
 			
 			$class = __CLASS__;
-			$object = new $class( $merchant_id, $transaction_id, $environment );
+			$object = new $class( $merchant_id, $transaction_key, $environment );
 			
 			return $object;
 			
@@ -41,14 +42,21 @@
 			}
 			catch ( CyberSource_Declined_Exception $e_declined ) {
 				
-				if ( isset( $this->request->ccAuthService ) && isset( $this->request->ccCaptureService ) && $this->response->reasonCode == 200 ) {
+				if ( isset( $this->request->ccAuthService ) && 
+					 isset( $this->request->ccCaptureService ) &&
+					 $this->response->reasonCode == 200 ) {
+
 					$response = $this->capture( $this->response->requestToken, $this->response->ccAuthReply->amount );
 				}
-				else if ( isset( $this->request->ccAuthService ) && isset( $this->request->ccCaptureService ) && $this->response->reasonCode == 230 ) {
+				else if ( isset( $this->request->ccAuthService ) &&
+					      isset( $this->request->ccCaptureService ) &&
+					      $this->response->reasonCode == 230 ) {
+
 					$response = $this->capture( $this->response->requestToken, $this->response->ccAuthReply->amount );
 				}
 				else {
-					print_r($this->request);print_r($this->response);
+					print_r($this->request);
+					print_r($this->response);
 					throw $e_declined;
 				}
 				
@@ -83,35 +91,50 @@
 	}
 	
 	// note we use our custom class, rather than using the main CyberSource class
-	$c = Custom_CyberSource::factory( $merchant_id, $transaction_id, CyberSource::ENV_TEST );
+	$c = Custom_CyberSource::factory( $merchant_id, $transaction_key, CyberSource\CyberSource::ENV_TEST );
 	
-	$c->card( $c->test_cards['visa'], '12', '2013', '1111', 'Visa' )
+	$c->card( $c->test_cards['visa'], '12', '2022', '1111', 'Visa' )
 		->bill_to( array(
 			'firstName' => 'John',
-			'lastName' => 'Tester',
+			'lastName' => 'Doe',
 			'street1' => '123 Main Street',
 			'city' => 'Columbia',
 			'state' => 'SC',
 			'postalCode' => '29201',
 			'country' => 'US',
-			'email' => 'john.tester@example.com',
+			'email' => 'john.doe@example.com',
 		) );
 	
+
+	$c->reference_code( time() );
+
 	// $5017.00 triggers error 200 - AVS rejected for GPN
 	// $9005.00 with CVV of 1111 triggers error 230 - CVN rejected for GPN
-	//$auth_response = $c->authorize( '9005.00' );
-	
-	//if ( !isset( $auth_response->requestToken ) ) {
-	//	die('Authorization seems to have failed!');
-	//}
-	
-	$auth_response = $c->authorize( '5017.00' );
-	//print_r($auth_response);
+
+	try {
+
+		//$auth_response = $c->authorize('5017.00');   // 203 - General decline of the card.
+		$auth_response = $c->authorize('9005.00'); // => ACCEPT
+
+		if ( !isset( $auth_response->requestToken ) ) {
+			die('Authorization seems to have failed!');
+		}
+
+		print_r($auth_response);
+	}
+	// catch ( CyberSource_Declined_Exception $e ) {
+	// 	echo 'Transaction declined';
+	// }
+	catch (Exception $e ) {
+		print_r($e);
+		die();
+	}
+
 	$sub_response = $c->create_subscription( $auth_response->requestID );
+	print_r($sub_response);
+
 	$charge_response = $c->charge_subscription( $sub_response->paySubscriptionCreateReply->subscriptionID, 2 );
-	
 	print_r($charge_response);
-	
 	
 	return;
 	
@@ -128,4 +151,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOL

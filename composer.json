@@ -1,11 +1,11 @@
 {
-	"name": "chrismeller/cybersource",
+	"name": "e-payment/cybersource",
 	"description": "A simple class for interfacing with some of the basic methods of the CyberSource SOAP Toolkit API for processing credit card transactions online.",
 	"license": "Apache-2.0",
 	"authors": [
 		{
-			"name": "Chris Meller",
-			"homepage": "http://chrismeller.com"
+			"name": "Junlapong L.",
+			"homepage": "https://github.com/junlapong"
 		}
 	],
 	"autoload": {

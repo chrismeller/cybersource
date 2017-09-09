@@ -18,8 +18,8 @@
 
 	try {
 
-		$subscription_id = $c->create_subscription();
-		echo 'Subscription ID: ' . $subscription_id . '<br/>' . PHP_EOL;
+		$subscription = $c->create_subscription();
+		echo 'Subscription ID: ' . $subscription->paySubscriptionCreateReply->subscriptionID . '<br/>' . PHP_EOL;
 	}
 	catch ( Exception $e ) {
 		echo $e->getCode() . ': ' . $e->getMessage() . '<br/>' . PHP_EOL;

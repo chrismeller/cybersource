@@ -56,4 +56,5 @@ class CybersourceExtended extends \CyberSource\CyberSource {
     }
 
 } 
-?>
+
+// EOL
