@@ -7,11 +7,11 @@
 
 	class Reporting {
 
-		const ENV_TEST = 'ebctest.cybersource.com/ebctest';
+		const ENV_TEST       = 'ebctest.cybersource.com/ebctest';
 		const ENV_PRODUCTION = 'ebc.cybersource.com/ebc';
 
-		const VERSION = '0.1';
-		const API_VERSION = '2011-03';		// there is no version; we read the March, 2011 Reporting Developer's Guide
+		const VERSION     = '0.1';
+		const API_VERSION = '2017-09';		// there is no version; we read the March, 2011 Reporting Developer's Guide
 
 		public $environment = self::ENV_TEST;
 
@@ -26,14 +26,13 @@
 			'transaction_exception_detail' 	=> 'TransactionExceptionDetailReport',
 		);
 
-		public function __construct ( $merchant_id = null, $username = null, $password = null, $environment = self::ENV_TEST ) {
+		public function __construct ($merchant_id = null, $username = null, $password = null, $environment = self::ENV_TEST ) {
 
 			$this->merchant_id( $merchant_id );
 			$this->username( $username );
 			$this->password( $password );
 
 			$this->environment( $environment );
-
 		}
 
 		public static function factory ( $merchant_id = null, $username = null, $password = null, $environment = self::ENV_TEST ) {
@@ -174,33 +173,34 @@
 		 *
 		 * @link http://php.net/fgetcsv
 		 */
-		private function str_getcsv ( $input, $delimiter = ',', $enclosure = '"', $escape = '\\' ) {
+		private function str_getcsv($input, $delimiter = ',', $enclosure = '"', $escape = '\\') {
 
 			// open a temporary "file" that's actually just in memory
-			$t = fopen( 'php://memory', 'rw' );
+			$t = fopen('php://memory', 'rw');
 
 			// write the contents of our CSV to it
-			fwrite( $t, $input );
+			fwrite($t, $input);
 
 			// skip back to the beginning of the file
-			fseek( $t, 0 );
+			fseek($t, 0);
 
 			// get the first row, they're the headers
-			$headers = fgetcsv( $t, null, $delimiter, $enclosure, $escape );
+			$headers = fgetcsv($t, null, $delimiter, $enclosure, $escape);
 
 			$rows = array();
-			while( !feof( $t ) ) {
-				$row = fgetcsv( $t, null, $delimiter, $enclosure, $escape );
 
-				$row = array_combine( $headers, $row );
+			while ( !feof($t) ) {
+				$row = fgetcsv($t, null, $delimiter, $enclosure, $escape);
 
-				$rows[] = $row;
+				if (is_array($row)) {
+					$row = @array_combine($headers, $row);
+					$rows[] = $row;
+				}
 			}
 
-			fclose( $t );
+			fclose($t);
 
 			return $rows;
-
 		}
 
 	}
@@ -208,4 +208,4 @@
 	class CyberSource_Report_Exception extends CyberSource_Exception {}
 	class CyberSource_Report_Not_Found_Exception extends CyberSource_Report_Exception {}
 
-?>
+// EOL

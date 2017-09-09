@@ -30,12 +30,12 @@ Usage
 Include the class in your code and instantiate the ``CyberSource`` class with your Merchant ID and Transaction ID:
 
 
-	$c = new CyberSource($merchant_id, $transaction_id);
+	$c = new CyberSource($merchant_id, $transaction_key);
 
 A factory pattern is also provided, for easy method chaining:
 
-	$result = CyberSource::factory($merchant_id, $transaction_id)
-	           ->card('4111111111111111', '12', '2013', '123')
+	$result = CyberSource::factory($merchant_id, $transaction_key)
+	           ->card('4111111111111111', '12', '2022', '123')
 	           ->add_item(5)
 	           ->charge();
 
@@ -51,8 +51,12 @@ To run the examples first create a file under `tests/config.php` with the follow
 
 $merchant_id     = 'xxx';
 $transaction_key = 'yyy';
-$username        = 'zzz';
-$password        = 'vvv';
+
+// ebc account
+$username        = 'uuu';
+$password        = 'ppp';
+
+// EOL
 ```
 
 Then run:
