@@ -1,11 +1,15 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require('charge.php');
+
+	$request_id = $c->response->requestID;
+	$amount     = $c->response->ccCaptureReply->amount;
+	$reference_code = $c->response->merchantReferenceCode;
 
 	try {
 		// Pass transaction ID as string to avoid MAX_INT problems.
-		$c->reference_code('1504975625');
-		$c->capture( null, '5.55', '5049756376926336803008');
+		$c->reference_code($reference_code);
+		$c->credit($request_id, $amount);
 	}
 	catch ( CyberSource_Declined_Exception $e ) {
 		echo 'Transaction declined';

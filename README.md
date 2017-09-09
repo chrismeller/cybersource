@@ -49,10 +49,10 @@ To run the examples first create a file under `tests/config.php` with the follow
 ```php
 <?php
 
-$merchant_id    = 'xxx';
-$transaction_id = 'yyy';
-$username       = 'zzz';
-$password       = 'vvv';
+$merchant_id     = 'xxx';
+$transaction_key = 'yyy';
+$username        = 'zzz';
+$password        = 'vvv';
 ```
 
 Then run:

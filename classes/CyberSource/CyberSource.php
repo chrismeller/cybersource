@@ -17,11 +17,11 @@
 		
 		public $merchant_id;
 		public $transaction_key;
-		public $reference_code = 'Unknown';		// for backend transaction reporting
+		public $reference_code = '';		// for backend transaction reporting
 		
 		public $bill_to = array();
-		public $card = array();
-		public $items = array();
+		public $card    = array();
+		public $items   = array();
 		
 		/**
 		 * @var stdClass The generated SOAP request, saved immediately before a transaction is run.
@@ -380,7 +380,7 @@
         /**
          * Perform cerdit action on subscribtion id
          **/		
-        public function credit_subscription($subscription_id,$amount=null)
+        public function credit_subscription($subscription_id, $amount=null)
         {
             $request = $this->create_request();
             // we want to cerdit based on subscription id
@@ -464,6 +464,7 @@
 				$subscription_info = new \stdClass();
 				$subscription_info->frequency = 'on-demand';
 			}
+
 			$request->recurringSubscriptionInfo = $subscription_info;
 			
 			// we only need to add billing info to the request if there is not a previous request token - otherwise it's contained in it
@@ -478,9 +479,14 @@
 			}
 			
 			$response = $this->run_transaction( $request );
+			$subscriptionID = null;
+
+			if ($response != null) {
+				$subscriptionID = $response->paySubscriptionCreateReply->subscriptionID;
+			}
 			
 			// return just the subscription ID from the response
-			return $response;
+			return $subscriptionID;
 			
 		}
 		
