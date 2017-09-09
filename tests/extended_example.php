@@ -1,5 +1,11 @@
 <?php
 
+error_reporting(0);
+ini_set('display_errors', false);
+
+require( dirname( __FILE__ ) . '/../vendor/autoload.php' );
+require( dirname( __FILE__ ) . '/config.php' );
+
 class CybersourceExtended extends \CyberSource\CyberSource {
 
     public static $translation_fields = array(
@@ -22,7 +28,7 @@ class CybersourceExtended extends \CyberSource\CyberSource {
         foreach ( $this->items as $item ) {
             $it = new stdClass();
             $it->unitPrice = $item['unitPrice'];
-            $it->quantity = $item['quantity'];
+            $it->quantity  = $item['quantity'];
             $it->id = $i;
 
             foreach ( self::$translation_fields as $k => $v ) {
@@ -52,6 +58,7 @@ class CybersourceExtended extends \CyberSource\CyberSource {
                 unset( $additional_fields[ $k ] );
             }
         }
+        
         return parent::add_item($price, $quantity, $additional_fields);
     }
 
