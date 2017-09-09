@@ -4,8 +4,7 @@
 	
 	try {
 		$c->reference_code('1504979191');
-		$subscription = $c->retrieve_subscription('5049791964456314803010');
-		//print_r($subscription);
+		$c->delete_subscription('5049791964456314803010');
 	}
 	catch ( Exception $e ) {
 		echo $e->getCode() . ': ' . $e->getMessage() . '<br />';

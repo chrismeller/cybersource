@@ -15,4 +15,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOL

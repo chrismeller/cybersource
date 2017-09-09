@@ -3,7 +3,8 @@
 	require( dirname( __FILE__ ) . '/main.php' );
 	
 	try {
-		$c->charge_subscription( '3099774717110176056428', '75' );
+		$c->reference_code( time() );
+		$c->charge_subscription('5049768459176396103012', '75');
 	}
 	catch ( Exception $e ) {
 		echo $e->getCode() . ': ' . $e->getMessage() . '<br />';
@@ -14,4 +15,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOL

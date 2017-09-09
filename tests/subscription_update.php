@@ -1,24 +1,33 @@
 <?php
 
+	/*
+
+	update_subscription
+	  => cannot update card information
+      => only update billing information
+
+	*/
+
 	require( dirname( __FILE__ ) . '/main.php' );
 	
-	$c->card( '4111111111111111', '12', '2013', '123', 'Visa' )
+	$c->card( '4111111111111111', '12', '2025', '123', 'Visa' )
 		->bill_to( array(
 			'firstName' => 'John',
-			'lastName' => 'Tester',
+			'lastName' => 'Doe',
 			'street1' => '321 Main Street',
 			'city' => 'Columbia',
 			'state' => 'SC',
 			'postalCode' => '29201',
 			'country' => 'US',
-			'email' => 'john.tester@example.com',
+			'email' => 'john.doe@example.com',
 		) );
 	
 	try {
-		 $c->update_subscription( '3099774717110176056428' );
+		$c->reference_code('1504979191');
+		$c->update_subscription('5049791964456314803010');
 	}
 	catch ( Exception $e ) {
-		echo $e->getCode() . ': ' . $e->getMessage() . '<br />';
+		echo $e->getCode() . ': ' . $e->getMessage() . '<br/>' . PHP_EOL;
 	}
 	
 	echo '<pre>';
@@ -26,4 +35,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOL
