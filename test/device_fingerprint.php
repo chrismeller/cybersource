@@ -16,15 +16,28 @@
 			'phoneNumber' => '+662-2962000'
 		) );
 
-	$c->reference_code( time() );
+	$c->reference_code('BAY' . time() );
 	$c->device_fingerprint_id($_GET['df_id']);
 	
 	// $c->authorize('5.55'); // USD
-	$c->authorize('5.55', 'THB');
+	$c->authorize('1572.0', 'THB');
 
 	echo '<pre>';
 	print_r( $c->request );
 	print_r( $c->response );
 	echo '</pre>';
 
-// EOL
+	$reference_code = $c->response->merchantReferenceCode;
+	$amount         = $c->response->ccAuthReply->amount;
+	$currency       = $c->response->purchaseTotals->currency;
+	$request_id     = $c->response->requestID;
+
+	$link = "capture_auth_request_id.php"
+	      . "?reference_code=" . $reference_code
+	      . "&amount=" . $amount
+	      . "&currency=" . $currency
+	      . "&request_id=" . $request_id;
+
+?>
+
+<a href="<?php echo $link ?>">capture_auth_request_id</a>

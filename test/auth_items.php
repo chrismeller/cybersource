@@ -19,7 +19,7 @@
 		->add_item( 1, 2 )
 		->add_item( 1.25 );
 
-	$c->reference_code( time() );
+	$c->reference_code('BAY' . time() );
 	$c->authorize(null, 'THB');
 	
 	

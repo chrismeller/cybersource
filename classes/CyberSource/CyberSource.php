@@ -428,7 +428,7 @@
             }
 
             // some info CyberSource asks us to add for troubleshooting purposes
-            $request->clientLibrary = 'CyberSourcePHP';
+            $request->clientLibrary = 'CyberSource SOAP PHP';
             $request->clientLibraryVersion = self::VERSION;
             $request->clientEnvironment = php_uname();
 
@@ -650,6 +650,8 @@
 			
 			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';
+			$cc_auth_service->reconciliationID = $this->reference_code;
+
 			$request->ccAuthService = $cc_auth_service;
 			
 			// add billing info to the request

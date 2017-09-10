@@ -16,7 +16,8 @@
 		$c->reference_code($reference_code);
 		$c->capture(null, $amount, $currency, $request_id);
 	}
-	catch ( CyberSource_Declined_Exception $e ) {
+	//catch ( CyberSource_Declined_Exception $e ) {
+	catch (Exception $e) {
 		echo 'Transaction declined';
 	}
 

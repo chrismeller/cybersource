@@ -41,7 +41,7 @@ $df_param = 'org_id=' . DF_ORG_ID . '&amp;session_id=' . $merchant_id . $sess_id
 	    	<h3>Device Fingerprint ID</h3>
 	    	<ul>
 	    		<li>device_fingerprint_param: <?php echo $df_param ?></li>
-				<li><a href="device_fingerprint.php?df_id=<?php echo $sess_id ?>">Submit Device Fingerprint</a></li>
+				<li><a href="device_fingerprint.php?df_id=<?php echo $sess_id ?>">Authorize + Device Fingerprint</a></li>
 			</ul>
 	    </div>
 	</div>

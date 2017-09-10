@@ -13,9 +13,10 @@
 			'postalCode' => '29201',
 			'country' => 'US',
 			'email' => 'john.doe@example.com',
+			'phoneNumber' => '6622962000',
 		) );
 
-	$c->reference_code( time() );
+	$c->reference_code('BAY' . time() );
 	
 	// $c->authorize('5.55'); // USD
 	$c->authorize('5.55', 'THB');
