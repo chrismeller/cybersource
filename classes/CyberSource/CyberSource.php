@@ -24,6 +24,8 @@
 		public $items   = array();
 
 		public $default_currency = 'USD';
+
+		public $device_fingerprint_id = '';
 		
 		/**
 		 * @var stdClass The generated SOAP request, saved immediately before a transaction is run.
@@ -179,6 +181,12 @@
 			return $this;
 		}
 		
+		public function device_fingerprint_id ( $df_id ) {
+			$this->device_fingerprint_id = $df_id;
+			
+			return $this;
+		}
+
 		public function card ( $number, $expiration_month, $expiration_year, $cvn_code = null, $card_type = null ) {
 			
 			$this->card = array(
@@ -414,6 +422,10 @@
             $request = new \stdClass();
             $request->merchantID = $this->merchant_id;
             $request->merchantReferenceCode = $this->reference_code;
+
+            if ($this->device_fingerprint_id != '') {
+            	$request->deviceFingerprintID = $this->device_fingerprint_id;
+            }
 
             // some info CyberSource asks us to add for troubleshooting purposes
             $request->clientLibrary = 'CyberSourcePHP';

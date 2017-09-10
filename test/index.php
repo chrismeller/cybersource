@@ -54,7 +54,7 @@
 				<li><a href="detect_missing_field.php">detect_missing_field</a></li>
 				<li><a href="validate_card.php">validate_card</a></li>
 				<li><a href="card_type.php">card_type</a></li>
-				<li><a href="#device_fingerprint.php">device_fingerprint</a></li>
+				<li><a href="device_fingerprint_form.php">device_fingerprint</a></li>
 		    </ul>
 
 		    <h3>Payment Token</h3>
