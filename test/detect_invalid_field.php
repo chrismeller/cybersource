@@ -6,7 +6,7 @@
 		->bill_to( array(
 			'firstName' => 'John',
 			'lastName' => 'Tester',
-			'street1' => '123 Main Street',
+			'street1' => '123 Main Street Long Road',
 			'city' => 'Columbia',
 			'state' => 'SC',
 			'postalCode' => '29201654654654',
@@ -15,9 +15,11 @@
 		) );
 	
 	try {
+		$c->reference_code( time() );
 		$c->authorize( 1 );
 	}
-	catch ( CyberSource_Invalid_Field_Exception $e ) {
+	//catch ( CyberSource_Invalid_Field_Exception $e ) {
+	catch (Exception $e ) {
 		echo $e->getMessage();
 	}
 	
@@ -26,4 +28,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOF

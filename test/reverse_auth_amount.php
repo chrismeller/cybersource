@@ -5,7 +5,7 @@
 
 	// get the amount and request id
 	$request_id = $c->response->requestID;
-	$amount = $c->response->ccAuthReply->amount;
+	$amount     = $c->response->ccAuthReply->amount;
 
 	// perform the reversal
 	$c->reverse_authorization( $request_id, $amount );

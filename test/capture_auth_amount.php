@@ -16,7 +16,7 @@
 		) );
 	
 	$c->reference_code( time() );
-	$auth_response = $c->authorize( '5.55', 'THB');
+	$auth_response = $c->authorize('5.55', 'THB');
 	
 	if ( !isset( $auth_response->requestToken ) ) {
 		die('Authorization seems to have failed!');

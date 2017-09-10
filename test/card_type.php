@@ -14,21 +14,23 @@
 		'Maestro' => '50339619890917',
 		'UATP' => '135412345678911',
 	);
+
+	header("Content-Type: text/plain");
 	
 	foreach ( $cards as $type => $number ) {
 		
 		$detected = $c->card_type( $number );
 		
 		if ( $type == $detected ) {
-			echo 'Detected ' . $detected . '<br />';
+			echo 'Detected ' . $detected . PHP_EOL;
 		}
 		else if ( $detected === null ) {
-			echo 'We didn\'t know what type ' . $type . ' really was.<br />';
+			echo 'We didn\'t know what type ' . $type . ' really was.' . PHP_EOL;;
 		}
 		else {
-			echo 'Yikes, we thought ' . $type . ' was really a ' . $detected . '<br />';
+			echo 'Yikes, we thought ' . $type . ' was really a ' . $detected . PHP_EOL;
 		}
 		
 	}
 
-?>
+// EOF

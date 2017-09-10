@@ -1,5 +1,7 @@
 <?php
 
+	error_reporting(0);
+	
 	require( dirname( __FILE__ ) . '/../vendor/autoload.php' );
 	require( dirname( __FILE__ ) . '/config.php' );
 
@@ -9,6 +11,8 @@
 	//print_r($transactions) . PHP_EOL;
 	//print_r(json_encode($transactions, JSON_PRETTY_PRINT)) . PHP_EOL;
 
+	header("Content-Type: text/plain");
+	
 	foreach ($transactions as $txn) {
 		echo $txn['transaction_date'] . "\t" . $txn['merchant_ref_number'] . "\t" .
 		     $txn['currency'] . ' ' . $txn['amount'] . "\t" . $txn['source'] . PHP_EOL;

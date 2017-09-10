@@ -25,4 +25,17 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-// EOF
+	$reference_code = $c->response->merchantReferenceCode;
+	$amount         = $c->response->ccAuthReply->amount;
+	$currency       = $c->response->purchaseTotals->currency;
+	$request_id     = $c->response->requestID;
+
+	$link = "capture_auth_request_id.php"
+	      . "?reference_code=" . $reference_code
+	      . "&amount=" . $amount
+	      . "&currency=" . $currency
+	      . "&request_id=" . $request_id;
+
+?>
+
+<a href="<?php echo $link ?>">capture_auth_request_id</a>
