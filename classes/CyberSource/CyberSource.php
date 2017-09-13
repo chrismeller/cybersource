@@ -144,19 +144,22 @@
 			'visa'       => '4111111111111111',
 		);
 		
-		public function __construct ($proxy_host = null , $proxy_port = null, $merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST ) {
+		public function __construct ($merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST, $proxy_host = null , $proxy_port = null) {
 			
-			$this->proxy_host( $proxy_host );
-			$this->proxy_port( $proxy_port );
 			$this->merchant_id( $merchant_id );
 			$this->transaction_key( $transaction_key );
 			$this->environment( $environment );
+
+			if (isset($proxy_host) && isset($proxy_port)) {
+				$this->proxy_host( $proxy_host );
+				$this->proxy_port( $proxy_port );
+			}
 		}
 		
-		public static function factory ($proxy_host = null , $proxy_port = null, $merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST ) {
+		public static function factory ($merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST, $proxy_host = null , $proxy_port = null) {
 			
 			$class = __CLASS__;
-			$object = new $class($proxy_host , $proxy_port , $merchant_id, $transaction_key, $environment );
+			$object = new $class($merchant_id, $transaction_key, $environment,$proxy_host, $proxy_port);
 			
 			return $object;
 		}
@@ -708,10 +711,13 @@
 				'encoding' => 'utf-8',		// set the internal character encoding to avoid random conversions
 				'exceptions' => true,		// throw SoapFault exceptions when there is an error
 				'connection_timeout' => $this->timeout,
-				'stream_context' => $context,
-				'proxy_host' => $this->proxy_host,
-				'proxy_port' => $this->proxy_port 
+				'stream_context' => $context
 			);
+
+			if (isset($this->proxy_host) && isset($this->proxy_port)) {
+				$soap_options['proxy_host'] = $this->proxy_host;
+				$soap_options['proxy_port'] = $this->proxy_port;
+			}
 
 			// if we're in test mode, don't cache the wsdl
 			if ( $this->environment == self::ENV_TEST ) {
