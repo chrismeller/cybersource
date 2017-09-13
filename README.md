@@ -27,7 +27,7 @@ The [documentation](http://www.cybersource.com/developers/develop/integration_me
 
 Usage
 =====
-Include the class in your code and instantiate the ``CyberSource`` class with your Merchant ID and Transaction ID:
+Include the class in your code and instantiate the ``CyberSource`` class with your `Merchant ID` and `Transaction Security Keys`:
 
 ```php
     $c = new CyberSource($merchant_id, $transaction_key);
@@ -51,12 +51,12 @@ To run the examples first create a file under `test/config.php` with the followi
 ```php
 <?php
 
-$merchant_id     = 'xxx';
-$transaction_key = 'yyy';
+$merchant_id     = '{merchant_id}';
+$transaction_key = '{transaction_key}';
 
 // ebc account
-$username        = 'uuu';
-$password        = 'ppp';
+$username        = '{username}';
+$password        = '{password}';
 
 // EOL
 ```
