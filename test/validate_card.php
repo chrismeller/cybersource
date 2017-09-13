@@ -1,6 +1,6 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 	
 	$c->card( '4111111111111111', '12', '2025', '123' )
 		->bill_to( array(
@@ -14,6 +14,7 @@
 			'email' => 'john.doe@example.com',
 		) );
 
+	$c->reference_code( time() );
 	$c->validate_card();
 	
 	echo '<pre>';

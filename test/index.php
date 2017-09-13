@@ -25,7 +25,7 @@
 <div class="container">
 	<div class="col-sm-8 col-md-8 col-lg-6">
 	    <div class="row">
-	    	<h1>CyberSource SOAP PHP</h1>
+	    	<h1>CyberSource SOAP Toolkit API </h1>
 	    	<h3>EBC Test</h3>
 	    	<ul>
 				<li><a href="https://ebctest.cybersource.com/ebctest/login/Login.do" target="ebc-test">Login</a></li>
@@ -33,9 +33,15 @@
 
 		    <h3>Auth / Sale / Void / Refund</h3>
 <pre>
-  Authorized   =>  Full Authorization
+  State            Action
+  ======================================================
+  Authorized   =>  Capture (Settlement)
+               =>  Reverse (Full Authorization Reversal)
+  ------------------------------------------------------
   Settled      =>  Void
-  Transmitted  =>  Refeund *
+  ------------------------------------------------------
+  Transmitted  =>  Credit (Refund *)
+  ------------------------------------------------------
 </pre>
 		    <ul>
 				<li><a href="auth_amount.php">auth_amount</a></li>
@@ -94,6 +100,9 @@
 	    </div>
 	</div>
 </div>
+
+<br/>
+<br/>
 
 <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

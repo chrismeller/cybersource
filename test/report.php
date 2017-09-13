@@ -8,7 +8,8 @@
 	$cr = new CyberSource\Reporting( $merchant_id, $username, $password, CyberSource\Reporting::ENV_TEST );
 
 	try {
-		$payments = $cr->payment_submission_detail('20170908');
+		$payments = $cr->payment_submission_detail(); // yesterday
+		//$payments = $cr->payment_submission_detail('20170908');
 
 		$total = 0;
 		foreach ( $payments as $payment ) {

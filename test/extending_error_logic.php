@@ -3,8 +3,9 @@
 	error_reporting(0);
 	ini_set('display_errors', false);
 
-	require( dirname( __FILE__ ) . '/../vendor/autoload.php' );
-	require( dirname( __FILE__ ) . '/config.php' );
+	//require realpath(dirname( __FILE__ ) . '/../vendor/autoload.php');
+	require realpath(dirname( __FILE__ ) . '/../classes/CyberSource/CyberSource.php');
+	require realpath(dirname( __FILE__ ) . '/config.php');
 
 	class Custom_CyberSource extends \CyberSource\CyberSource {
 		
@@ -106,6 +107,8 @@
 		) );
 	
 
+	header("Content-Type: text/plain");
+	
 	$c->reference_code( time() );
 
 	// $5017.00 triggers error 200 - AVS rejected for GPN
@@ -136,8 +139,6 @@
 	$charge_response = $c->charge_subscription( $sub_response->paySubscriptionCreateReply->subscriptionID, 2 );
 	print_r($charge_response);
 	
-	return;
-	
 	try {
 		$c->charge( '5017.00' );
 		echo 'Charged!';die();
@@ -146,9 +147,9 @@
 		echo 'Transaction declined';
 	}
 	
-	echo '<pre>';
+	
 	print_r( $c->request );
 	print_r( $c->response );
-	echo '</pre>';
+	
 
 // EOL

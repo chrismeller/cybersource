@@ -1,6 +1,6 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 	
 	$cards = array(
 		'American Express' => '378282246310005',

@@ -1,6 +1,6 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 
 	$c->card( '4111111111111111', '12', '2022', '123' )
 		->bill_to( array(
@@ -22,11 +22,6 @@
 	// $c->authorize('5.55'); // USD
 	$c->authorize('1572.0', 'THB');
 
-	echo '<pre>';
-	print_r( $c->request );
-	print_r( $c->response );
-	echo '</pre>';
-
 	$reference_code = $c->response->merchantReferenceCode;
 	$amount         = $c->response->ccAuthReply->amount;
 	$currency       = $c->response->purchaseTotals->currency;
@@ -41,3 +36,12 @@
 ?>
 
 <a href="<?php echo $link ?>">capture_auth_request_id</a>
+
+<?php
+
+	echo '<pre>';
+	print_r( $c->request );
+	print_r( $c->response );
+	echo '</pre>';
+
+// EOL

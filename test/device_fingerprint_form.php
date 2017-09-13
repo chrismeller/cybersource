@@ -1,6 +1,6 @@
 <?php
 
-require( dirname( __FILE__ ) . '/config.php' );
+require realpath(dirname( __FILE__ ) . '/main.php');
 
 // DF TEST: 1snn5n9w, LIVE: k8vif92e 
 define('DF_ORG_ID', '1snn5n9w');
@@ -37,7 +37,6 @@ $df_param = 'org_id=' . DF_ORG_ID . '&amp;session_id=' . $merchant_id . $sess_id
 <div class="container">
 	<div class="col-sm-8 col-md-8 col-lg-8">
 	    <div class="row">
-	    	<h1>CyberSource SOAP PHP</h1>
 	    	<h3>Device Fingerprint ID</h3>
 	    	<ul>
 	    		<li>device_fingerprint_param: <?php echo $df_param ?></li>

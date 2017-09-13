@@ -1,6 +1,6 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 	
 	try {
 		$c->reference_code('1504979191');

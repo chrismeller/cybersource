@@ -1,6 +1,6 @@
 <?php
 
-	require('charge.php');
+	require realpath(dirname( __FILE__ ) . '/charge.php');
 
 	$request_id = $c->response->requestID;
 	$amount     = $c->response->ccCaptureReply->amount;

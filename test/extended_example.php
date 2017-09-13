@@ -1,10 +1,11 @@
 <?php
 
 error_reporting(0);
-ini_set('display_errors', false);
+//ini_set('display_errors', false);
 
-require( dirname( __FILE__ ) . '/../vendor/autoload.php' );
-require( dirname( __FILE__ ) . '/config.php' );
+//require realpath(dirname( __FILE__ ) . '/../vendor/autoload.php');
+require realpath(dirname( __FILE__ ) . '/../classes/CyberSource/CyberSource.php');
+require realpath(dirname( __FILE__ ) . '/config.php');
 
 class CybersourceExtended extends \CyberSource\CyberSource {
 

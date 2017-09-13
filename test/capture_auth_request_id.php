@@ -1,6 +1,6 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 
 	$reference_code = $_GET['reference_code'];
 	$amount         = $_GET['amount'];

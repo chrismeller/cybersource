@@ -1,6 +1,6 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 	
 	$c->card( '4111111111111111', null, '2022', '123' )
 		->bill_to( array(

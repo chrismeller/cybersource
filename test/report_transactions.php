@@ -6,7 +6,9 @@
 	require( dirname( __FILE__ ) . '/config.php' );
 
 	$cr = new CyberSource\Reporting( $merchant_id, $username, $password, CyberSource\Reporting::ENV_TEST );
-	$transactions = $cr->transaction_detail(/* yyyyMMdd */ '20170908'); 
+	
+	$transactions = $cr->transaction_detail(); // yesterday 
+	//$transactions = $cr->transaction_detail(/* yyyyMMdd */ '20170908'); 
 
 	$customers = array();
 	foreach ($transactions as $transaction) {

@@ -1,10 +1,10 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 	
 	try {
 		$c->reference_code( time() );
-		$c->charge_subscription('5049768459176396103012', '75');
+		$c->charge_subscription('5053355694176713403008', '75', 'THB');
 	}
 	catch ( Exception $e ) {
 		echo $e->getCode() . ': ' . $e->getMessage() . '<br />';

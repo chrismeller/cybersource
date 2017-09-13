@@ -1,10 +1,12 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 	
 	try {
-		$c->reference_code('1504979191');
-		$subscription = $c->retrieve_subscription('5049791964456314803010');
+
+		$subscription_id = '5053355694176713403008';
+		$c->reference_code($subscription_id);
+		$subscription = $c->retrieve_subscription($subscription_id);
 		//print_r($subscription);
 	}
 	catch ( Exception $e ) {
