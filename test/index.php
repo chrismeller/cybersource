@@ -54,13 +54,13 @@
 				<li><a href="credit.php">credit</a></li>
 				<li><a href="reverse_auth_amount.php">reverse_auth_amount</a></li>
 				<li><a href="reverse_auth_items.php">reverse_auth_items</a></li>
-				<li><a href="extended_example.php">extended_example *</a></li>
-				<li><a href="extending_error_logic.php">extending_error_logic</a></li>
+				<li><a href="device_fingerprint_form.php">device_fingerprint</a></li>
+				<li><a href="validate_card.php">validate_card</a></li>
 				<li><a href="detect_invalid_field.php">detect_invalid_field</a></li>
 				<li><a href="detect_missing_field.php">detect_missing_field</a></li>
-				<li><a href="validate_card.php">validate_card</a></li>
 				<li><a href="card_type.php">card_type</a></li>
-				<li><a href="device_fingerprint_form.php">device_fingerprint</a></li>
+				<li><a href="extending_error_logic.php">extending_error_logic</a></li>
+				<li><a href="extended_example.php">extended_example</a> ***</li>
 		    </ul>
 
 		    <h3>Payment Tokenization</h3>

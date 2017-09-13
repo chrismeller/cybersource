@@ -51,12 +51,17 @@ To run the examples first create a file under `test/config.php` with the followi
 ```php
 <?php
 
+date_default_timezone_set('Asia/Bangkok');
+
 $merchant_id     = '{merchant_id}';
 $transaction_key = '{transaction_key}';
 
 // ebc account
 $username        = '{username}';
 $password        = '{password}';
+
+// proxy
+$proxy = array( 'host' => '{hostname or ip}', 'port' => {port} );
 
 // EOL
 ```

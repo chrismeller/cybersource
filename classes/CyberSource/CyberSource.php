@@ -15,8 +15,7 @@
 		 */
 		public $environment = self::ENV_TEST;
 		
-		public $proxy_host;
-		public $proxy_port;
+		public $proxy = array();
 		public $merchant_id;
 		public $transaction_key;
 		public $reference_code = '';		// for backend transaction reporting
@@ -146,34 +145,24 @@
 			'visa'       => '4111111111111111',
 		);
 		
-		public function __construct ($merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST, $proxy_host = null , $proxy_port = null) {
+		public function __construct ($merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST) {
 			
 			$this->merchant_id( $merchant_id );
 			$this->transaction_key( $transaction_key );
 			$this->environment( $environment );
 
-			if (isset($proxy_host) && isset($proxy_port)) {
-				$this->proxy_host( $proxy_host );
-				$this->proxy_port( $proxy_port );
-			}
 		}
 		
-		public static function factory ($merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST, $proxy_host = null , $proxy_port = null) {
+		public static function factory ($merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST) {
 			
 			$class = __CLASS__;
-			$object = new $class($merchant_id, $transaction_key, $environment,$proxy_host, $proxy_port);
+			$object = new $class($merchant_id, $transaction_key, $environment);
 			
 			return $object;
 		}
 
-		public function proxy_host ( $proxy_host ) {
-			$this->proxy_host = $proxy_host;
-			
-			return $this;
-		}
-
-		public function proxy_port ( $proxy_port ) {
-			$this->proxy_port = $proxy_port;
+		public function set_proxy( $proxy = array() ) {
+			$this->proxy = $proxy;
 			
 			return $this;
 		}
@@ -748,9 +737,9 @@
 				'stream_context' => $context
 			);
 
-			if (isset($this->proxy_host) && isset($this->proxy_port)) {
-				$soap_options['proxy_host'] = $this->proxy_host;
-				$soap_options['proxy_port'] = $this->proxy_port;
+			if (isset($this->proxy['host']) && isset($this->proxy['port'])) {
+				$soap_options['proxy_host'] = $this->proxy['host'];
+				$soap_options['proxy_port'] = $this->proxy['port'];
 			}
 
 			// if we're in test mode, don't cache the wsdl

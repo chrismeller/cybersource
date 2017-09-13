@@ -4,7 +4,7 @@
 	
 	try {
 		$c->reference_code( time() );
-		$c->delete_subscription('5053433119046363803008');
+		$c->delete_subscription('5053458480656253103012');
 	}
 	catch ( Exception $e ) {
 		echo $e->getCode() . ': ' . $e->getMessage() . '<br />';
