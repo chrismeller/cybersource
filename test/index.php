@@ -54,7 +54,7 @@
 				<li><a href="credit.php">credit</a></li>
 				<li><a href="reverse_auth_amount.php">reverse_auth_amount</a></li>
 				<li><a href="reverse_auth_items.php">reverse_auth_items</a></li>
-				<li><a href="extended_example.php">extended_example</a></li>
+				<li><a href="extended_example.php">extended_example *</a></li>
 				<li><a href="extending_error_logic.php">extending_error_logic</a></li>
 				<li><a href="detect_invalid_field.php">detect_invalid_field</a></li>
 				<li><a href="detect_missing_field.php">detect_missing_field</a></li>
@@ -63,13 +63,20 @@
 				<li><a href="device_fingerprint_form.php">device_fingerprint</a></li>
 		    </ul>
 
-		    <h3>Payment Token</h3>
+		    <h3>Payment Tokenization</h3>
 		    <ul>
 		    	<li><a href="subscription_create.php">subscription_create</a></li>
 				<li><a href="subscription_charge.php">subscription_charge</a></li>
+				<li><a href="subscription_credit.php">subscription_credit</a></li>
 				<li><a href="subscription_retrieve.php">subscription_retrieve</a></li>
 				<li><a href="subscription_update.php">subscription_update</a></li>
 				<li><a href="subscription_delete.php">subscription_delete</a></li>
+		    </ul>
+
+		    <h3>Recurring Billing</h3>
+		    <ul>
+		    	<li><a href="subscription_recurring.php">Recurring</a></li>
+		    	<li><a href="subscription_installment.php">Installment</a></li>
 		    </ul>
 
 		    <h3>Report Inquiry</h3>
@@ -77,12 +84,6 @@
 		    	<li><a href="report.php">report</a></li>
 				<li><a href="report_transactions.php">report_transactions</a></li>
 				<li><a href="report_transactions_detail.php">report_transactions_detail</a></li>
-		    </ul>
-
-		    <h3>Recurring Billing</h3>
-		    <ul>
-		    	<li><a href="recurring.php">Recurring</a></li>
-		    	<li><a href="Subscription.php">Installment</a></li>
 		    </ul>
 
 		    <h3>Payer Authen (3-D Secure)</h3>
