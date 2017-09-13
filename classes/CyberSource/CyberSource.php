@@ -15,6 +15,8 @@
 		 */
 		public $environment = self::ENV_TEST;
 		
+		public $proxy_host;
+		public $proxy_port;
 		public $merchant_id;
 		public $transaction_key;
 		public $reference_code = '';		// for backend transaction reporting
@@ -142,19 +144,33 @@
 			'visa'       => '4111111111111111',
 		);
 		
-		public function __construct ( $merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST ) {
+		public function __construct ($proxy_host = null , $proxy_port = null, $merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST ) {
 			
+			$this->proxy_host( $proxy_host );
+			$this->proxy_port( $proxy_port );
 			$this->merchant_id( $merchant_id );
 			$this->transaction_key( $transaction_key );
 			$this->environment( $environment );
 		}
 		
-		public static function factory ( $merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST ) {
+		public static function factory ($proxy_host = null , $proxy_port = null, $merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST ) {
 			
 			$class = __CLASS__;
-			$object = new $class( $merchant_id, $transaction_key, $environment );
+			$object = new $class($proxy_host , $proxy_port , $merchant_id, $transaction_key, $environment );
 			
 			return $object;
+		}
+
+		public function proxy_host ( $proxy_host ) {
+			$this->proxy_host = $proxy_host;
+			
+			return $this;
+		}
+
+		public function proxy_port ( $proxy_port ) {
+			$this->proxy_port = $proxy_port;
+			
+			return $this;
 		}
 		
 		public function merchant_id ( $id ) {
@@ -693,6 +709,8 @@
 				'exceptions' => true,		// throw SoapFault exceptions when there is an error
 				'connection_timeout' => $this->timeout,
 				'stream_context' => $context,
+				'proxy_host' => $this->proxy_host,
+				'proxy_port' => $this->proxy_port 
 			);
 
 			// if we're in test mode, don't cache the wsdl
