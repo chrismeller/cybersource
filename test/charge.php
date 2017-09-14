@@ -17,6 +17,7 @@
 		->add_item( 1.25 );
 	
 	$c->reference_code( time() );
+	$c->reconcile_code('R' . time() );
 	$c->charge(null, 'THB');
 	
 	echo '<pre>';

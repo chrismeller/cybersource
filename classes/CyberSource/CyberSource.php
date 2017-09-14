@@ -18,7 +18,9 @@
 		public $proxy = array();
 		public $merchant_id;
 		public $transaction_key;
-		public $reference_code = '';		// for backend transaction reporting
+
+		public $reference_code = null;		// for backend transaction reporting
+		public $reconcile_code = null;
 		
 		public $bill_to = array();
 		public $card    = array();
@@ -191,6 +193,12 @@
 			return $this;
 		}
 		
+		public function reconcile_code ( $code ) {
+			$this->reconcile_code = $code;
+			
+			return $this;
+		}
+
 		public function device_fingerprint_id ( $df_id ) {
 			$this->device_fingerprint_id = $df_id;
 			
@@ -322,6 +330,11 @@
 			// we want to perform an authorization
 			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
+
+			if (! empty($this->reconcile_code)) {
+				$cc_auth_service->reconciliationID = $this->reconcile_code;
+			}
+
 			$request->ccAuthService = $cc_auth_service;
 			
 			// and actually charge them
@@ -587,6 +600,11 @@
 			// we want to perform an authorization
 			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
+
+			if (! empty($this->reconcile_code)) {
+				$cc_auth_service->reconciliationID = $this->reconcile_code;
+			}
+			
 			$request->ccAuthService = $cc_auth_service;
 			
 			// and actually charge them
@@ -692,8 +710,11 @@
 			
 			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';
-			$cc_auth_service->reconciliationID = $this->reference_code;
 
+			if (! empty($this->reconcile_code)) {
+				$cc_auth_service->reconciliationID = $this->reconcile_code;
+			}
+			
 			$request->ccAuthService = $cc_auth_service;
 			
 			// add billing info to the request

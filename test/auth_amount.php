@@ -16,7 +16,8 @@
 			'phoneNumber' => '6622962000',
 		) );
 
-	$c->reference_code('BAY' . time() );
+	$c->reference_code('B' . time() );
+	$c->reconcile_code('R' . time() );
 	
 	// $c->authorize('5.55'); // USD
 	$c->authorize('5.55', 'THB');

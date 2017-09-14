@@ -14,7 +14,7 @@
 			'email' => 'john.doe@example.com',
 		) );
 
-	$c->reference_code( time() );
+	$c->reference_code('V' . time() );
 	$c->validate_card();
 	
 	echo '<pre>';
