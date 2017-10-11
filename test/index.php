@@ -79,24 +79,24 @@
 		    	<li><a href="subscription_installment.php">Installment</a></li>
 		    </ul>
 
+		    <h3>Payer Authen (3-D Secure)</h3>
+		    <ul>
+		    	<li><a href="#PayerAuthEnroll.php">PayerAuthEnroll</a></li>
+		    	<li><a href="#PayerAuthValidate.php">PayerAuthValidate</a></li>
+		    </ul>
+
 		    <h3>Report Inquiry</h3>
 		    <ul>
 		    	<li><a href="report.php">report</a></li>
 				<li><a href="report_transactions.php">report_transactions</a></li>
 				<li><a href="report_transactions_detail.php">report_transactions_detail</a></li>
 		    </ul>
-
-		    <h3>Payer Authen (3-D Secure)</h3>
-		    <ul>
-		    	<li><a href="PayerAuthEnroll.php">PayerAuthEnroll</a></li>
-		    	<li><a href="PayerAuthValidate.php">PayerAuthValidate</a></li>
-		    </ul>
-
+		    
 		    <h3>Decision Management</h3>
 		    <ul>
-		    	<li><a href="DMAuthWeb.php">DMAuthWeb</a></li>
-		    	<li><a href="DMAuthApi.php">DMAuthApi</a></li>
-		    	<li><a href="DMAuthNVP.php">DMAuthNVP</a></li>
+		    	<li><a href="#DMAuthWeb.php">DMAuthWeb</a></li>
+		    	<li><a href="#DMAuthApi.php">DMAuthApi</a></li>
+		    	<li><a href="#DMAuthNVP.php">DMAuthNVP</a></li>
 		    </ul>
 	    </div>
 	</div>
