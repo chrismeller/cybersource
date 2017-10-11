@@ -2,13 +2,10 @@
 
 	namespace CyberSource;
 
-	// To have the exceptions loaded.
-	require dirname( __FILE__ ) . '/CyberSource.php';
-
 	class Reporting {
 
-		const ENV_TEST       = 'ebctest.cybersource.com/ebctest';
-		const ENV_PRODUCTION = 'ebc.cybersource.com/ebc';
+		const ENV_TEST    = 'ebctest.cybersource.com/ebctest';
+		const ENV_LIVE    = 'ebc.cybersource.com/ebc';
 
 		const VERSION     = '0.1';
 		const API_VERSION = '2017-09';		// there is no version; we read the March, 2011 Reporting Developer's Guide
@@ -205,7 +202,7 @@
 
 	}
 
-	class CyberSource_Report_Exception extends CyberSource_Exception {}
+	class CyberSource_Report_Exception extends \Exception {}
 	class CyberSource_Report_Not_Found_Exception extends CyberSource_Report_Exception {}
 
 // EOL
