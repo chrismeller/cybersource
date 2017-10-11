@@ -2,22 +2,42 @@
 
 	error_reporting(0);
 
-	require( dirname( __FILE__ ) . '/../vendor/autoload.php' );
-	require( dirname( __FILE__ ) . '/config.php' );
-
-	$cr = new CyberSource\Reporting( $merchant_id, $username, $password, CyberSource\Reporting::ENV_TEST );
+	//require realpath(dirname(__FILE__) . '/../vendor/autoload.php');
+	require realpath(dirname(__FILE__) . '/../classes/CyberSource/Reporting.php');
+	require realpath(dirname(__FILE__) . '/config.php');
 
 	try {
-		$payments = $cr->payment_submission_detail(); // yesterday
-		//$payments = $cr->payment_submission_detail('20170908');
 
-		$total = 0;
+		$cr = new CyberSource\Reporting($merchant_id, $username, $password, CyberSource\Reporting::ENV_TEST);
+		//$cr->set_proxy($proxy);
+
+		//$payments = $cr->payment_submission_detail(); // default yesterday
+		$payments = $cr->payment_submission_detail('20171010'); /* yyyyMMdd */ 
+
+		$currency_amount = array();
+
 		foreach ( $payments as $payment ) {
-			$total = $total + $payment['amount'];
+
+			//print_r($payment); continue;
+			$currency = $payment['currency'];
+
+			if (! array_key_exists($currency, $currency_amount)) {
+				$currency_amount[$currency] = $payment['amount'];
+			}
+			else {
+				$currency_amount[$currency] += $payment['amount'];
+			}
 		}
 
 		header("Content-Type: text/plain");
-		echo number_format( $total, 2 );
+		echo '--------------' . PHP_EOL;
+		echo 'PAYMENT REPORT' . PHP_EOL;
+		echo '--------------' . PHP_EOL;
+
+		foreach ($currency_amount as $currency => $amount ) {
+			echo $currency . ': ' . number_format($amount, 2) . PHP_EOL;
+		}
+
 	}
 	catch (Exception $e) {
 		echo $e->getMessage();

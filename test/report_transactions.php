@@ -2,13 +2,14 @@
 
 	error_reporting(0);
 	
-	require( dirname( __FILE__ ) . '/../vendor/autoload.php' );
-	require( dirname( __FILE__ ) . '/config.php' );
+	require realpath(dirname(__FILE__) . '/../classes/CyberSource/Reporting.php');
+	require realpath(dirname(__FILE__) . '/config.php');
 
-	$cr = new CyberSource\Reporting( $merchant_id, $username, $password, CyberSource\Reporting::ENV_TEST );
+	$cr = new CyberSource\Reporting($merchant_id, $username, $password, CyberSource\Reporting::ENV_TEST);
+	//$cr->set_proxy($proxy);
 	
-	$transactions = $cr->transaction_detail(); // yesterday 
-	//$transactions = $cr->transaction_detail(/* yyyyMMdd */ '20170908'); 
+	$transactions = $cr->transaction_detail(); // /* yesterday */
+	//$transactions = $cr->transaction_detail('20170908'); /* yyyyMMdd */ 
 
 	$customers = array();
 	foreach ($transactions as $transaction) {
@@ -16,6 +17,6 @@
 	}
 
 	header("Content-Type: text/plain");
-	print_r( array_filter( array_unique( $customers ) ) );
+	print_r(array_filter(array_unique($customers)));
 
 // EOL
