@@ -12,31 +12,20 @@
 		//$cr->set_proxy($proxy);
 
 		//$payments = $cr->payment_submission_detail(); // default yesterday
-		$payments = $cr->payment_submission_detail('20171010'); /* yyyyMMdd */ 
-
-		$currency_amount = array();
+		$payments = $cr->payment_submission_detail('20171011'); /* yyyyMMdd */ 
+		$total    = 0.0;
 
 		foreach ( $payments as $payment ) {
-
-			//print_r($payment); continue;
-			$currency = $payment['currency'];
-
-			if (! array_key_exists($currency, $currency_amount)) {
-				$currency_amount[$currency] = $payment['amount'];
-			}
-			else {
-				$currency_amount[$currency] += $payment['amount'];
-			}
+			//print_r($payments);
+			$total += $total + $payment['amount'];
 		}
 
 		header("Content-Type: text/plain");
-		echo '--------------' . PHP_EOL;
-		echo 'PAYMENT REPORT' . PHP_EOL;
-		echo '--------------' . PHP_EOL;
+		echo '------------------' . PHP_EOL;
+		echo 'PAYMENT SUBMISSION' . PHP_EOL;
+		echo '------------------' . PHP_EOL;
 
-		foreach ($currency_amount as $currency => $amount ) {
-			echo $currency . ': ' . number_format($amount, 2) . PHP_EOL;
-		}
+		echo number_format($total, 2) . PHP_EOL;
 
 	}
 	catch (Exception $e) {
