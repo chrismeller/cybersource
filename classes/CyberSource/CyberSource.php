@@ -4,11 +4,11 @@
 	
 	class CyberSource {
 		
-		const ENV_TEST    = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.141.wsdl';
-		const ENV_LIVE    = 'https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.141.wsdl';
+		const ENV_TEST    = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.142.wsdl';
+		const ENV_LIVE    = 'https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.142.wsdl';
 		
 		const VERSION     = '0.4';
-		const API_VERSION = '1.141';
+		const API_VERSION = '1.142';
 		
 		/**
 		 * @var string The URL to the WSDL endpoint for the environment we're running in (test or production), as stored in self::ENV_* constants.
@@ -467,8 +467,9 @@
             }
 
             // some info CyberSource asks us to add for troubleshooting purposes
-            $request->clientLibrary = 'CyberSource SOAP PHP';
+            $request->clientLibrary = 'CyberSource SOAP PHP v' . self::VERSION;
             $request->clientLibraryVersion = self::VERSION;
+            $request->clientApplicationVersion = self::API_VERSION;
             $request->clientEnvironment = php_uname();
 
             // this also is pretty stupid, particularly the name
@@ -764,12 +765,12 @@
 			}
 
 			// if we're in test mode, don't cache the wsdl
-			if ( $this->environment == self::ENV_TEST ) {
+			if ($this->environment == self::ENV_TEST) {
 				$soap_options['cache_wsdl'] = WSDL_CACHE_NONE;
 			}
 
 			// if we're in production mode, cache the wsdl like crazy
-			if ( $this->environment == self::ENV_PRODUCTION ) {
+			else if ($this->environment == self::ENV_LIVE) {
 				$soap_options['cache_wsdl'] = WSDL_CACHE_BOTH;
 			}
 
