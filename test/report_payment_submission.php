@@ -1,15 +1,8 @@
 <?php
-	error_reporting(~0);
-	ini_set('display_errors', 1);
 
-	//require realpath(dirname(__FILE__) . '/../vendor/autoload.php');
-	require realpath(dirname(__FILE__) . '/../classes/CyberSource/Reporting.php');
-	require realpath(dirname(__FILE__) . '/config.php');
+	require realpath(dirname( __FILE__ ) . '/report_main.php');
 
 	try {
-
-		$cr = new CyberSource\Reporting($merchant_id, $username, $password, CyberSource\Reporting::ENV_TEST);
-		$cr->set_proxy($proxy);
 
 		//$payments = $cr->payment_submission_detail(); // default yesterday
 		$payments = $cr->payment_submission_detail('20171011'); /* yyyyMMdd */ 
@@ -33,4 +26,4 @@
 		echo $e->getMessage();
 	}
 
-// EOL
+// EOF
