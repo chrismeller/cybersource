@@ -85,7 +85,12 @@
 		    	<li><a href="#PayerAuthValidate.php">PayerAuthValidate</a></li>
 		    </ul>
 
-		    <h3>Report Inquiry</h3>
+		    <h3>Query</h3>
+		    <ul>
+		    	<li><a href="query.php">single transaction query</a></li>
+		    </ul>
+
+		    <h3>Report</h3>
 		    <ul>
 		    	<li><a href="report_payment_submission.php">report_payment_submission</a></li>
 				<li><a href="report_transactions.php">report_transactions</a></li>
