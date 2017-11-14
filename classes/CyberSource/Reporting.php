@@ -6,12 +6,10 @@
 
 		const ENV_TEST    = 'ebctest.cybersource.com/ebctest';
 		const ENV_LIVE    = 'ebc.cybersource.com/ebc';
-
 		const VERSION     = '0.1';
 		const API_VERSION = '2017-09';		// there is no version; we read the March, 2011 Reporting Developer's Guide
 
 		public $environment = self::ENV_TEST;
-
 		public $merchant_id;
 		public $username;
 		public $password;
@@ -29,7 +27,6 @@
 			$this->merchant_id( $merchant_id );
 			$this->username( $username );
 			$this->password( $password );
-
 			$this->environment( $environment );
 		}
 
@@ -39,9 +36,7 @@
 			$object = new $class( $merchant_id, $username, $password, $environment );
 
 			return $object;
-
 		}
-
 
 		public function set_proxy( $proxy = array() ) {
 			$this->proxy = $proxy;
@@ -89,8 +84,7 @@
 		 */
 		public function __call ( $method_name, $arguments ) {
 
-			if ( isset( $this->methods_to_reports[$method_name] ) )
-			{
+			if ( isset( $this->methods_to_reports[$method_name] ) ) {
 				array_unshift( $arguments, $this->methods_to_reports[$method_name] );
 				return call_user_func_array( array( $this, 'execute_report' ), $arguments );
 			}
@@ -128,24 +122,21 @@
 				$this->merchant_id . '/' .
 				$report_name . '.csv';
 
-
 			if (isset($this->proxy['host']) && isset($this->proxy['port'])) {
 
-
 				$context = stream_context_create(array("http"=>array(
-				    "method" => "GET",
-				    "header" => "Accept: xml/*, text/*, */*\r\n",
+				    "method"  => "GET",
+				    "header"  => "Accept: xml/*, text/*, */*\r\n",
 				    "ignore_errors" => false,
-				    "proxy" => 'tcp://'. $this->proxy['host'] . ':'. $this->proxy['port'],
+				    "proxy"   => 'tcp://'. $this->proxy['host'] . ':'. $this->proxy['port'],
 				    "timeout" => 50,
 				)));
 
 				stream_context_set_option($context, 'ssl', 'verify_peer', false);
-
 				$result = @file_get_contents($url, false, $context);	
-
-			}else{
-				$result = @file_get_contents( $url );		
+			}
+			else {
+				$result = @file_get_contents($url);		
 			}
 
 			if ( $result === false ) {
@@ -171,12 +162,10 @@
 						// we don't know exactly what type of error, throw a generic error
 						throw new CyberSource_Report_Exception( $message );
 					}
-
 				}
 
 				// something happened, but we dont' know what - die!
 				throw new CyberSource_Report_Exception();
-
 			}
 
 			// parse out the results
@@ -186,7 +175,6 @@
 			$records = $this->str_getcsv( $result );
 
 			return $records;
-
 		}
 
 		/**
@@ -225,10 +213,9 @@
 
 			return $rows;
 		}
-
 	}
 
 	class CyberSource_Report_Exception extends \Exception {}
 	class CyberSource_Report_Not_Found_Exception extends CyberSource_Report_Exception {}
 
-// EOL
+// EOF
