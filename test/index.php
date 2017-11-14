@@ -87,17 +87,19 @@
 
 		    <h3>Report Inquiry</h3>
 		    <ul>
-		    	<li><a href="report.php">report</a></li>
+		    	<li><a href="report_payment_submission.php">report_payment_submission</a></li>
 				<li><a href="report_transactions.php">report_transactions</a></li>
 				<li><a href="report_transactions_detail.php">report_transactions_detail</a></li>
 		    </ul>
 		    
+		    <!--
 		    <h3>Decision Management</h3>
 		    <ul>
 		    	<li><a href="#DMAuthWeb.php">DMAuthWeb</a></li>
 		    	<li><a href="#DMAuthApi.php">DMAuthApi</a></li>
 		    	<li><a href="#DMAuthNVP.php">DMAuthNVP</a></li>
 		    </ul>
+			-->
 	    </div>
 	</div>
 </div>
