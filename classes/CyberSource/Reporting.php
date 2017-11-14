@@ -15,6 +15,7 @@
 		public $merchant_id;
 		public $username;
 		public $password;
+		public $proxy = array();
 
 		private $methods_to_reports = array(
 			'payment_submission_detail' 	=> 'PaymentSubmissionDetailReport',
@@ -39,6 +40,13 @@
 
 			return $object;
 
+		}
+
+
+		public function set_proxy( $proxy = array() ) {
+			$this->proxy = $proxy;
+			
+			return $this;
 		}
 
 		public function merchant_id ( $id ) {
@@ -120,7 +128,25 @@
 				$this->merchant_id . '/' .
 				$report_name . '.csv';
 
-			$result = @file_get_contents( $url );
+
+			if (isset($this->proxy['host']) && isset($this->proxy['port'])) {
+
+
+				$context = stream_context_create(array("http"=>array(
+				    "method" => "GET",
+				    "header" => "Accept: xml/*, text/*, */*\r\n",
+				    "ignore_errors" => false,
+				    "proxy" => 'tcp://'. $this->proxy['host'] . ':'. $this->proxy['port'],
+				    "timeout" => 50,
+				)));
+
+				stream_context_set_option($context, 'ssl', 'verify_peer', false);
+
+				$result = @file_get_contents($url, false, $context);	
+
+			}else{
+				$result = @file_get_contents( $url );		
+			}
 
 			if ( $result === false ) {
 
