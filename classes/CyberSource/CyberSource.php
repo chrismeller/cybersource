@@ -21,6 +21,7 @@
 
 		public $reference_code = null;		// for backend transaction reporting
 		public $reconcile_code = null;
+		public $merchant_descriptor = null;
 		
 		public $bill_to = array();
 		public $card    = array();
@@ -199,6 +200,12 @@
 			return $this;
 		}
 
+		public function merchant_descriptor ( $merchant_descriptor ) {
+			$this->merchant_descriptor = $merchant_descriptor;
+			
+			return $this;
+		}
+
 		public function device_fingerprint_id ( $df_id ) {
 			$this->device_fingerprint_id = $df_id;
 			
@@ -333,6 +340,12 @@
 
 			if (! empty($this->reconcile_code)) {
 				$cc_auth_service->reconciliationID = $this->reconcile_code;
+			}
+
+			if (! empty($this->merchant_descriptor)) {
+				$invoice_header = new \stdClass();
+				$invoice_header->merchantDescriptor = $this->merchant_descriptor;
+				$request->invoiceHeader = $invoice_header;
 			}
 
 			$request->ccAuthService = $cc_auth_service;
@@ -714,6 +727,12 @@
 
 			if (! empty($this->reconcile_code)) {
 				$cc_auth_service->reconciliationID = $this->reconcile_code;
+			}
+
+			if (! empty($this->merchant_descriptor)) {
+				$invoice_header = new \stdClass();
+				$invoice_header->merchantDescriptor = $this->merchant_descriptor;
+				$request->invoiceHeader = $invoice_header;
 			}
 			
 			$request->ccAuthService = $cc_auth_service;

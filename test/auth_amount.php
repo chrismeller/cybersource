@@ -16,11 +16,12 @@
 			'phoneNumber' => '6622962000',
 		) );
 
-	$c->reference_code('B' . time() );
+	$c->reference_code('M' . time() );
 	$c->reconcile_code('R' . time() );
+	$c->merchant_descriptor('Merchant* Descriptor');
 	
 	// $c->authorize('5.55'); // USD
-	$c->authorize('5.55', 'THB');
+	$c->authorize('1572.00', 'THB');
 
 	echo '<pre>';
 	print_r( $c->request );

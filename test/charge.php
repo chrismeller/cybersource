@@ -16,8 +16,9 @@
 		->add_item( 5, 2 )
 		->add_item( 1.25 );
 	
-	$c->reference_code( time() );
+	$c->reference_code('M' . time() );
 	$c->reconcile_code('R' . time() );
+	$c->merchant_descriptor('Merchant*Descriptor');
 	$c->charge(null, 'THB');
 	
 	echo '<pre>';
