@@ -8,8 +8,14 @@ define ('QUERY_URL_LIVE', 'https://ebc.cybersource.com/ebc/Query');
 ob_start();
 
 //---------------------------------------------------------------------------//
-$type = 'json';
-//$type = @$_GET['type'];
+
+//$type = 'json';
+$type                    = @$_GET['type'];
+$requestID               = @$_GET['requestID'];
+$merchantReferenceNumber = @$_GET['merchantReferenceNumber'];
+$targetDate              = @$_GET['targetDate'];
+
+//---------------------------------------------------------------------------//
 
 $authz = $username . ':' . $password;
 //echo $authz . PHP_EOL;
@@ -30,11 +36,18 @@ $post_fields .= '&subtype=transactionDetail';
 $post_fields .= '&versionNumber=1.7';
 
 // single result
-// $post_fields .= '&requestID=5106476186716067204105';
+if (!empty($requestID)) {
+	$post_fields .= '&requestID=' . $requestID;
+}
 
 // step result
-$post_fields .= '&merchantReferenceNumber=1510652969';
-$post_fields .= '&targetDate=20171114';
+elseif (!empty($merchantReferenceNumber) && !empty($targetDate)) {
+	$post_fields .= '&merchantReferenceNumber=' . $merchantReferenceNumber;
+	$post_fields .= '&targetDate=' . $targetDate;
+}
+else {
+	die('invalid query parameters');
+}
 
 // print_r($post_fields);
 curl_setopt($conn, CURLOPT_POSTFIELDS, $post_fields);

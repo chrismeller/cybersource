@@ -87,7 +87,8 @@
 
 		    <h3>Query</h3>
 		    <ul>
-		    	<li><a href="query.php">single transaction query</a></li>
+		    	<li><a href="query.php?type=json&requestID=5106529824836024803011">single transaction query</a></li>
+		    	<li><a href="query.php?type=json&merchantReferenceNumber=1510652969&targetDate=20171114">step transaction query</a></li>
 		    </ul>
 
 		    <h3>Report</h3>
