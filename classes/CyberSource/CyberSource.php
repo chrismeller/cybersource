@@ -1,27 +1,37 @@
 <?php
+
 	namespace CyberSource;
 	
 	class CyberSource {
 		
-		const ENV_TEST = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.67.wsdl';
-		const ENV_PRODUCTION = 'https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.67.wsdl';
+		const ENV_TEST    = 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.142.wsdl';
+		const ENV_LIVE    = 'https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.142.wsdl';
 		
-		const VERSION = '0.3';
-		const API_VERSION = '1.67';
+		const VERSION     = '0.4';
+		const API_VERSION = '1.142';
 		
 		/**
 		 * @var string The URL to the WSDL endpoint for the environment we're running in (test or production), as stored in self::ENV_* constants.
 		 */
 		public $environment = self::ENV_TEST;
 		
+		public $proxy = array();
 		public $merchant_id;
-		public $transaction_id;
-		public $reference_code = 'Unknown';		// for backend transaction reporting
+		public $transaction_key;
+
+		public $reference_code = null;		// for backend transaction reporting
+		public $reconcile_code = null;
+		public $merchant_descriptor = null;
 		
 		public $bill_to = array();
-		public $card = array();
-		
-		public $items = array();
+		public $card    = array();
+		public $items   = array();
+
+		public $default_currency = 'USD';
+
+		public $device_fingerprint_id = '';
+
+		public $recurring = array();
 		
 		/**
 		 * @var stdClass The generated SOAP request, saved immediately before a transaction is run.
@@ -122,38 +132,42 @@
 		);
 		
 		public $card_types = array(
-			'Visa' => '001',
-			'MasterCard' => '002',
+			'Visa'             => '001',
+			'MasterCard'       => '002',
 			'American Express' => '003',
-			'Discover' => '004',
-			'Diners Club' => '005',
-			'Carte Blanche' => '006',
-			'JCB' => '007',
+			'Discover'         => '004',
+			'Diners Club'      => '005',
+			'Carte Blanche'    => '006',
+			'JCB'              => '007',
 		);
 		
 		public $test_cards = array(
-			'amex' => '378282246310005',
-			'discover' => '6011111111111117',
+			'amex'       => '378282246310005',
+			'discover'   => '6011111111111117',
 			'mastercard' => '5555555555554444',
-			'visa' => '4111111111111111',
+			'visa'       => '4111111111111111',
 		);
 		
-		public function __construct ( $merchant_id = null, $transaction_id = null, $environment = self::ENV_TEST ) {
+		public function __construct ($merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST) {
 			
 			$this->merchant_id( $merchant_id );
-			$this->transaction_id( $transaction_id );
-			
+			$this->transaction_key( $transaction_key );
 			$this->environment( $environment );
-			
+
 		}
 		
-		public static function factory ( $merchant_id = null, $transaction_id = null, $environment = self::ENV_TEST ) {
+		public static function factory ($merchant_id = null, $transaction_key = null, $environment = self::ENV_TEST) {
 			
 			$class = __CLASS__;
-			$object = new $class( $merchant_id, $transaction_id, $environment );
+			$object = new $class($merchant_id, $transaction_key, $environment);
 			
 			return $object;
+		}
+
+		public function set_proxy( $proxy = array() ) {
+			$this->proxy = $proxy;
 			
+			return $this;
 		}
 		
 		public function merchant_id ( $id ) {
@@ -162,8 +176,8 @@
 			return $this;
 		}
 		
-		public function transaction_id ( $id ) {
-			$this->transaction_id = $id;
+		public function transaction_key ( $id ) {
+			$this->transaction_key = $id;
 			
 			return $this;
 		}
@@ -180,12 +194,30 @@
 			return $this;
 		}
 		
+		public function reconcile_code ( $code ) {
+			$this->reconcile_code = $code;
+			
+			return $this;
+		}
+
+		public function merchant_descriptor ( $merchant_descriptor ) {
+			$this->merchant_descriptor = $merchant_descriptor;
+			
+			return $this;
+		}
+
+		public function device_fingerprint_id ( $df_id ) {
+			$this->device_fingerprint_id = $df_id;
+			
+			return $this;
+		}
+
 		public function card ( $number, $expiration_month, $expiration_year, $cvn_code = null, $card_type = null ) {
 			
 			$this->card = array(
-				'accountNumber' => $number,
+				'accountNumber'   => $number,
 				'expirationMonth' => $expiration_month,
-				'expirationYear' => $expiration_year,
+				'expirationYear'  => $expiration_year,
 			);
 			
 			// if a cvn code was supplied, use it
@@ -282,14 +314,40 @@
 			return $card;
 			
 		}
-		
-		public function charge ( $amount = null ) {
+
+		private function create_recurring ( ) {
 			
-			$request = $this->create_request();
+			// build the recurring class
+			$recurring = new \stdClass();
+			
+			// add all the recurring fields
+			foreach ( $this->recurring as $k => $v ) {
+				$recurring->$k = $v;
+			}
+			
+			return $recurring;
+			
+		}
+
+		
+		public function charge ( $amount = null, $currency = null) {
+			
+			$request = $this->create_request($currency);
 			
 			// we want to perform an authorization
 			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
+
+			if (! empty($this->reconcile_code)) {
+				$cc_auth_service->reconciliationID = $this->reconcile_code;
+			}
+
+			if (! empty($this->merchant_descriptor)) {
+				$invoice_header = new \stdClass();
+				$invoice_header->merchantDescriptor = $this->merchant_descriptor;
+				$request->invoiceHeader = $invoice_header;
+			}
+
 			$request->ccAuthService = $cc_auth_service;
 			
 			// and actually charge them
@@ -317,9 +375,9 @@
 			
 		}
 		
-		public function capture ( $request_token = null, $amount = null, $request_id = null ) {
+		public function capture ($request_token = null, $amount = null, $currency = null, $request_id = null) {
 			
-			$request = $this->create_request();
+			$request = $this->create_request($currency);
 			
 			$capture_service = new \stdClass();
 			$capture_service->run = 'true';
@@ -329,10 +387,10 @@
 			{
 				$capture_service->authRequestID = $request_id;
 			}
-			else
-			{
-				$capture_service->authRequestToken = $request_token;
-			}
+			// else
+			// {
+			// 	$capture_service->authRequestToken = $request_token;
+			// }
 
 			$request->ccCaptureService = $capture_service;
 			
@@ -357,9 +415,9 @@
 		 * @param  int $amount     The amount to credit. Leave it null to use the list of items already assigned to the current object instead.
 		 * @return object             The response from CyberSource.
 		 */
-		public function credit ( $request_id, $amount = null ) {
+		public function credit ($request_id, $amount = null, $currency = null) {
 			
-			$request = $this->create_request();
+			$request = $this->create_request($currency);
 			
 			// we want to perform an authorization
 			$cc_credit_service = new \stdClass();
@@ -380,12 +438,13 @@
 			return $response;
 			
 		}
+
         /**
          * Perform cerdit action on subscribtion id
          **/		
-        public function credit_subscription($subscription_id,$amount=null)
+        public function credit_subscription($subscription_id, $amount = null, $currency = null)
         {
-            $request = $this->create_request();
+            $request = $this->create_request($currency);
             // we want to cerdit based on subscription id
             $cc_credit_service = new \stdClass();
             $cc_credit_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
@@ -409,21 +468,29 @@
             return $response;
         }
 
-        protected function create_request ( ) {
+        protected function create_request ($currency = null) {
 
             // build the class for the request
             $request = new \stdClass();
             $request->merchantID = $this->merchant_id;
             $request->merchantReferenceCode = $this->reference_code;
 
+            if ($this->device_fingerprint_id != '') {
+            	$request->deviceFingerprintID = $this->device_fingerprint_id;
+            }
+
             // some info CyberSource asks us to add for troubleshooting purposes
-            $request->clientLibrary = 'CyberSourcePHP';
+            $request->clientLibrary = 'CyberSource SOAP PHP v' . self::VERSION;
             $request->clientLibraryVersion = self::VERSION;
+            $request->clientApplicationVersion = self::API_VERSION;
             $request->clientEnvironment = php_uname();
 
             // this also is pretty stupid, particularly the name
             $purchase_totals = new \stdClass();
-            $purchase_totals->currency = 'USD';
+
+            //$purchase_totals->currency = $this->default_currency;
+            $purchase_totals->currency = ($currency != null) ? $currency : $this->default_currency;
+
             $request->purchaseTotals = $purchase_totals;
 
             return $request;
@@ -435,13 +502,18 @@
 		 * pre-created request token from an authorization request that's already been performed.
 		 * 
 		 * @param string $request_id The request ID received from an AuthReply statement, if applicable.
-		 * @param boolean|null $auto_authorize Set to false to enable the disableAutoAuth flag to avoid an authorization and simply store the card. The default (null) means to omit the value, which means it'll use the setting on the account. Set to true to force an authorization, whether the account requires it or not.
+		 * @param boolean|null $auto_author ize Set to false to enable the disableAutoAuth flag to avoid an authorization and simply store the card. The default (null) means to omit the value, which means it'll use the setting on the account. Set to true to force an authorization, whether the account requires it or not.
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function create_subscription ( $request_id = null, $auto_authorize = null, $subscription_info = null ) {
+		public function create_subscription ($request_id = null, $auto_authorize = null, $subscription_info = null) {
 			
-			$request = $this->create_request();
-			
+			if ($subscription_info == null) {
+				$request = $this->create_request();
+			}
+			else {
+				$request = $this->create_request($subscription_info->currency);
+			}
+
 			$subscription_create = new \stdClass();
 			$subscription_create->run = 'true';
 			
@@ -467,6 +539,7 @@
 				$subscription_info = new \stdClass();
 				$subscription_info->frequency = 'on-demand';
 			}
+			
 			$request->recurringSubscriptionInfo = $subscription_info;
 			
 			// we only need to add billing info to the request if there is not a previous request token - otherwise it's contained in it
@@ -479,12 +552,28 @@
 				$request->card = $this->create_card();
 				
 			}
+
+			//print_r($this); die();
 			
 			$response = $this->run_transaction( $request );
+			// $subscriptionID = null;
+
+			// if ($response != null) {
+			// 	$subscriptionID = $response->paySubscriptionCreateReply->subscriptionID;
+			// }
 			
 			// return just the subscription ID from the response
 			return $response;
 			
+		}
+
+
+		public function recurring_subscription () {
+
+			$recurring = $this->create_recurring();
+
+			return $this->create_subscription (null, null, $recurring, $currency);
+
 		}
 		
 		/**
@@ -493,7 +582,7 @@
 		 * @param string $subscription_id The CyberSource Subscription ID to delete.
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function delete_subscription ( $subscription_id ) {
+		public function delete_subscription ($subscription_id) {
 			
 			$request = $this->create_request();
 			
@@ -518,13 +607,18 @@
 		 * @param float $amount The dollar amount to charge.
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function charge_subscription ( $subscription_id, $amount = null ) {
+		public function charge_subscription ($subscription_id, $amount = null, $currency = null) {
 			
-			$request = $this->create_request();
+			$request = $this->create_request($currency);
 			
 			// we want to perform an authorization
 			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';		// note that it's textual true so it doesn't get cast as an int
+
+			if (! empty($this->reconcile_code)) {
+				$cc_auth_service->reconciliationID = $this->reconcile_code;
+			}
+			
 			$request->ccAuthService = $cc_auth_service;
 			
 			// and actually charge them
@@ -551,7 +645,7 @@
 			
 		}
 		
-		public function update_subscription ( $subscription_id ) {
+		public function update_subscription ($subscription_id) {
 			
 			$request = $this->create_request();
 			
@@ -574,7 +668,7 @@
 			
 		}
 		
-		public function retrieve_subscription ( $subscription_id ) {
+		public function retrieve_subscription ($subscription_id) {
 			
 			$request = $this->create_request();
 			
@@ -599,7 +693,7 @@
 		 * 
 		 * @return stdClass The raw response object from the SOAP endpoint
 		 */
-		public function validate_card ( ) {
+		public function validate_card () {
 			
 			$request = $this->create_request();
 			
@@ -624,12 +718,23 @@
 			
 		}
 		
-		public function authorize ( $amount = null ) {
+		public function authorize ($amount = null, $currency = null) {
 			
-			$request = $this->create_request();
+			$request = $this->create_request($currency);
 			
 			$cc_auth_service = new \stdClass();
 			$cc_auth_service->run = 'true';
+
+			if (! empty($this->reconcile_code)) {
+				$cc_auth_service->reconciliationID = $this->reconcile_code;
+			}
+
+			if (! empty($this->merchant_descriptor)) {
+				$invoice_header = new \stdClass();
+				$invoice_header->merchantDescriptor = $this->merchant_descriptor;
+				$request->invoiceHeader = $invoice_header;
+			}
+			
 			$request->ccAuthService = $cc_auth_service;
 			
 			// add billing info to the request
@@ -670,16 +775,21 @@
 				'encoding' => 'utf-8',		// set the internal character encoding to avoid random conversions
 				'exceptions' => true,		// throw SoapFault exceptions when there is an error
 				'connection_timeout' => $this->timeout,
-				'stream_context' => $context,
+				'stream_context' => $context
 			);
 
+			if (isset($this->proxy['host']) && isset($this->proxy['port'])) {
+				$soap_options['proxy_host'] = $this->proxy['host'];
+				$soap_options['proxy_port'] = $this->proxy['port'];
+			}
+
 			// if we're in test mode, don't cache the wsdl
-			if ( $this->environment == self::ENV_TEST ) {
+			if ($this->environment == self::ENV_TEST) {
 				$soap_options['cache_wsdl'] = WSDL_CACHE_NONE;
 			}
 
 			// if we're in production mode, cache the wsdl like crazy
-			if ( $this->environment == self::ENV_PRODUCTION ) {
+			else if ($this->environment == self::ENV_LIVE) {
 				$soap_options['cache_wsdl'] = WSDL_CACHE_BOTH;
 			}
 
@@ -796,6 +906,38 @@
 			return $this;
 			
 		}
+
+
+		public function recurring ( $info = array()) {
+			
+			$fields = array(
+				'frequency',
+				'amount',
+				'currency',
+				'startDate',
+				'installment',
+				'automaticRenew',
+			);
+
+			if ( isset($info['installment']) && $info['installment'] === 'true') {
+				array_push($fields, 'numberOfPayments');
+				$info['automaticRenew'] = 'false';
+			}
+			else {
+				array_splice($fields, 4, 2);
+			}
+
+			foreach ( $fields as $field ) {
+				if ( !isset( $info[ $field ] ) ) {
+					throw new \InvalidArgumentException( 'The recurring field ' . $field . ' is missing!' );
+				}
+			}
+
+			$this->recurring = $info;
+			
+			return $this;
+			
+		}
 		
 		/**
 		 * Get the remote IP address, but try and take into account common proxy headers and the like.
@@ -829,7 +971,7 @@
 			$type_namespace = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText';
 			
 			$user = new \SoapVar( $this->merchant_id, XSD_STRING, null, $wsse_namespace, null, $wsse_namespace );
-			$pass = new \SoapVar( $this->transaction_id, XSD_STRING, null, $type_namespace, null, $wsse_namespace );
+			$pass = new \SoapVar( $this->transaction_key, XSD_STRING, null, $type_namespace, null, $wsse_namespace );
 			
 			// create the username token container object
 			$username_token = new \stdClass();
@@ -957,4 +1099,4 @@
 	class CyberSource_Invalid_Field_Exception extends CyberSource_Exception {}
 	class CyberSource_Missing_Field_Exception extends CyberSource_Exception {}
 
-?>
+// EOF

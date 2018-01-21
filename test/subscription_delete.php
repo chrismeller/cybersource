@@ -1,9 +1,10 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 	
 	try {
-		$c->charge_subscription( '3099774717110176056428', '75' );
+		$c->reference_code( time() );
+		$c->delete_subscription('5053458480656253103012');
 	}
 	catch ( Exception $e ) {
 		echo $e->getCode() . ': ' . $e->getMessage() . '<br />';
@@ -14,4 +15,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOL

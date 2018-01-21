@@ -1,9 +1,10 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 	
 	try {
-		$subscription = $c->retrieve_subscription( '3099774717110176056428' );
+		$c->reference_code( time() );
+		$c->credit_subscription('5053355694176713403008', '75', 'THB');
 	}
 	catch ( Exception $e ) {
 		echo $e->getCode() . ': ' . $e->getMessage() . '<br />';
@@ -14,4 +15,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOL

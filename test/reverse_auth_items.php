@@ -1,7 +1,7 @@
 <?php
 
 	// require the auth_items test to perform an authorization for a set of items
-	require('auth_items.php');
+	require realpath(dirname( __FILE__ ) . '/auth_items.php');
 
 	// get the request id
 	$request_id = $c->response->requestID;
@@ -14,4 +14,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOL

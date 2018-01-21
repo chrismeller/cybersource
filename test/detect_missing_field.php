@@ -1,12 +1,12 @@
 <?php
 
-	require( dirname( __FILE__ ) . '/main.php' );
+	require realpath(dirname( __FILE__ ) . '/main.php');
 	
-	$c->card( '4111111111111111', '12', '2013', '123', 'Visa' )
+	$c->card( '4111111111111111', null, '2022', '123' )
 		->bill_to( array(
 			'firstName' => 'John',
 			'lastName' => 'Tester',
-			'street1' => '321 Main Street',
+			'street1' => '123 Main Street',
 			'city' => 'Columbia',
 			'state' => 'SC',
 			'postalCode' => '29201',
@@ -15,10 +15,12 @@
 		) );
 	
 	try {
-		 $c->update_subscription( '3099774717110176056428' );
+		$c->reference_code( time() );
+		$c->authorize( 1 );
 	}
-	catch ( Exception $e ) {
-		echo $e->getCode() . ': ' . $e->getMessage() . '<br />';
+	//catch ( CyberSource_Missing_Field_Exception $e ) {
+	catch (Exception $e ) {
+		echo $e->getMessage();
 	}
 	
 	echo '<pre>';
@@ -26,4 +28,4 @@
 	print_r( $c->response );
 	echo '</pre>';
 
-?>
+// EOF

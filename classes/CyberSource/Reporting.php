@@ -2,22 +2,18 @@
 
 	namespace CyberSource;
 
-	// To have the exceptions loaded.
-	require dirname( __FILE__ ) . '/CyberSource.php';
-
 	class Reporting {
 
-		const ENV_TEST = 'ebctest.cybersource.com/ebctest';
-		const ENV_PRODUCTION = 'ebc.cybersource.com/ebc';
-
-		const VERSION = '0.1';
-		const API_VERSION = '2011-03';		// there is no version; we read the March, 2011 Reporting Developer's Guide
+		const ENV_TEST    = 'ebctest.cybersource.com/ebctest';
+		const ENV_LIVE    = 'ebc.cybersource.com/ebc';
+		const VERSION     = '0.1';
+		const API_VERSION = '2017-09';		// there is no version; we read the March, 2011 Reporting Developer's Guide
 
 		public $environment = self::ENV_TEST;
-
 		public $merchant_id;
 		public $username;
 		public $password;
+		public $proxy = array();
 
 		private $methods_to_reports = array(
 			'payment_submission_detail' 	=> 'PaymentSubmissionDetailReport',
@@ -26,14 +22,12 @@
 			'transaction_exception_detail' 	=> 'TransactionExceptionDetailReport',
 		);
 
-		public function __construct ( $merchant_id = null, $username = null, $password = null, $environment = self::ENV_TEST ) {
+		public function __construct ($merchant_id = null, $username = null, $password = null, $environment = self::ENV_TEST ) {
 
 			$this->merchant_id( $merchant_id );
 			$this->username( $username );
 			$this->password( $password );
-
 			$this->environment( $environment );
-
 		}
 
 		public static function factory ( $merchant_id = null, $username = null, $password = null, $environment = self::ENV_TEST ) {
@@ -42,7 +36,12 @@
 			$object = new $class( $merchant_id, $username, $password, $environment );
 
 			return $object;
+		}
 
+		public function set_proxy( $proxy = array() ) {
+			$this->proxy = $proxy;
+			
+			return $this;
 		}
 
 		public function merchant_id ( $id ) {
@@ -85,8 +84,7 @@
 		 */
 		public function __call ( $method_name, $arguments ) {
 
-			if ( isset( $this->methods_to_reports[$method_name] ) )
-			{
+			if ( isset( $this->methods_to_reports[$method_name] ) ) {
 				array_unshift( $arguments, $this->methods_to_reports[$method_name] );
 				return call_user_func_array( array( $this, 'execute_report' ), $arguments );
 			}
@@ -124,7 +122,22 @@
 				$this->merchant_id . '/' .
 				$report_name . '.csv';
 
-			$result = @file_get_contents( $url );
+			if (isset($this->proxy['host']) && isset($this->proxy['port'])) {
+
+				$context = stream_context_create(array("http"=>array(
+				    "method"  => "GET",
+				    "header"  => "Accept: xml/*, text/*, */*\r\n",
+				    "ignore_errors" => false,
+				    "proxy"   => 'tcp://'. $this->proxy['host'] . ':'. $this->proxy['port'],
+				    "timeout" => 50,
+				)));
+
+				stream_context_set_option($context, 'ssl', 'verify_peer', false);
+				$result = @file_get_contents($url, false, $context);	
+			}
+			else {
+				$result = @file_get_contents($url);		
+			}
 
 			if ( $result === false ) {
 
@@ -149,12 +162,10 @@
 						// we don't know exactly what type of error, throw a generic error
 						throw new CyberSource_Report_Exception( $message );
 					}
-
 				}
 
 				// something happened, but we dont' know what - die!
 				throw new CyberSource_Report_Exception();
-
 			}
 
 			// parse out the results
@@ -164,7 +175,6 @@
 			$records = $this->str_getcsv( $result );
 
 			return $records;
-
 		}
 
 		/**
@@ -174,38 +184,38 @@
 		 *
 		 * @link http://php.net/fgetcsv
 		 */
-		private function str_getcsv ( $input, $delimiter = ',', $enclosure = '"', $escape = '\\' ) {
+		private function str_getcsv($input, $delimiter = ',', $enclosure = '"', $escape = '\\') {
 
 			// open a temporary "file" that's actually just in memory
-			$t = fopen( 'php://memory', 'rw' );
+			$t = fopen('php://memory', 'rw');
 
 			// write the contents of our CSV to it
-			fwrite( $t, $input );
+			fwrite($t, $input);
 
 			// skip back to the beginning of the file
-			fseek( $t, 0 );
+			fseek($t, 0);
 
 			// get the first row, they're the headers
-			$headers = fgetcsv( $t, null, $delimiter, $enclosure, $escape );
+			$headers = fgetcsv($t, null, $delimiter, $enclosure, $escape);
 
 			$rows = array();
-			while( !feof( $t ) ) {
-				$row = fgetcsv( $t, null, $delimiter, $enclosure, $escape );
 
-				$row = array_combine( $headers, $row );
+			while ( !feof($t) ) {
+				$row = fgetcsv($t, null, $delimiter, $enclosure, $escape);
 
-				$rows[] = $row;
+				if (is_array($row)) {
+					$row = @array_combine($headers, $row);
+					$rows[] = $row;
+				}
 			}
 
-			fclose( $t );
+			fclose($t);
 
 			return $rows;
-
 		}
-
 	}
 
-	class CyberSource_Report_Exception extends CyberSource_Exception {}
+	class CyberSource_Report_Exception extends \Exception {}
 	class CyberSource_Report_Not_Found_Exception extends CyberSource_Report_Exception {}
 
-?>
+// EOF
